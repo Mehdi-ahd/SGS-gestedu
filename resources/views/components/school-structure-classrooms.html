@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="GestEdu - Système de gestion scolaire">
+    <meta name="author" content="GestEdu">
+    <title>Salles de classe | GestEdu</title>
+
+    <!-- Favicons -->
+    <link rel="icon" href="img/gestedu-logo.svg" sizes="any">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom styles identical to template -->
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --success-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+            --info-color: #36b9cc;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+            --sidebar-width: 14rem;
+            --sidebar-collapsed-width: 6.5rem;
+            --topbar-height: 4.375rem;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--light-color);
+            overflow-x: hidden;
+        }
+        
+        /* Template styles for sidebar, topbar, etc. */
+        .sidebar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar {
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #224abe 100%);
+            color: #fff;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            flex-shrink: 0;
+            height: var(--topbar-height);
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-brand {
+            height: 100%;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+        }
+        
+        .sidebar-brand-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        .sidebar-brand-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 4rem;
+        }
+        
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .sidebar hr {
+            margin: 0.5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-heading {
+            text-transform: uppercase;
+            font-weight: 800;
+            font-size: 0.65rem;
+            padding: 0.5rem 1rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link:focus {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            color: #fff;
+            font-weight: 700;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link i {
+            font-size: 1rem;
+            margin-right: 0.75rem;
+            opacity: 0.8;
+            min-width: 1rem;
+        }
+        
+        .nav-link span {
+            font-size: 0.85rem;
+        }
+        
+        .nav-item:has(.collapse) .nav-link::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: auto;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:has(.collapse) .nav-link.collapsed::after {
+            transform: rotate(-90deg);
+        }
+        
+        .collapse-inner {
+            background-color: rgba(255, 255, 255, 0.95);
+            margin: 0 1rem 0.5rem 1rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .collapse-inner ul {
+            list-style: none;
+            padding: 0.5rem 0;
+            margin: 0;
+        }
+        
+        .collapse-inner li {
+            margin: 0;
+        }
+        
+        .collapse-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--dark-color);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .collapse-item:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+        
+        .collapse-item.active {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .content-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .topbar {
+            height: var(--topbar-height);
+            background-color: #fff;
+            box-shadow: 0 .125rem .25rem rgba(58, 59, 69, .15);
+            z-index: 1;
+        }
+        
+        .topbar .nav-item .nav-link {
+            color: var(--dark-color);
+            height: var(--topbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            position: relative;
+        }
+        
+        .topbar .nav-item .nav-link:hover, .topbar .nav-item .nav-link:focus {
+            color: var(--primary-color);
+            background-color: transparent;
+        }
+        
+        .topbar .nav-item .nav-link i {
+            font-size: 1rem;
+            margin-right: 0;
+            opacity: 1;
+        }
+        
+        .topbar .dropdown-menu {
+            position: absolute;
+            right: 0;
+            left: auto;
+            width: auto;
+            border: none;
+            box-shadow: 0 .125rem .25rem rgba(58, 59, 69, .15);
+        }
+        
+        .badge-counter {
+            position: absolute;
+            transform: scale(0.7);
+            transform-origin: top right;
+            right: 0.25rem;
+            top: 0.25rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            padding: 0.75rem 1.25rem;
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        /* ================ NOUVELLES STYLES POUR SALLES DE CLASSE ================ */
+        
+        /* Navigation tabs */
+        .structure-nav {
+            background-color: #fff;
+            border-radius: 0.35rem;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .structure-nav .nav-link {
+            color: var(--dark-color);
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.75rem 1.25rem;
+            margin: 0 0.125rem;
+            transition: all 0.15s ease-in-out;
+            font-weight: 400;
+        }
+        
+        .structure-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(78, 115, 223, 0.1);
+        }
+        
+        .structure-nav .nav-link.active {
+            color: #fff;
+            background-color: var(--primary-color);
+        }
+        
+        /* Classroom table */
+        .classrooms-table {
+            background-color: #fff;
+            border-radius: 0.35rem;
+            overflow: hidden;
+        }
+        
+        .classrooms-table th {
+            background-color: #f8f9fc;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .classrooms-table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .classrooms-table tbody tr:hover {
+            background-color: #f8f9fc;
+        }
+        
+        .capacity-badge {
+            background-color: var(--info-color);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .equipment-list {
+            font-size: 0.875rem;
+            color: #858796;
+        }
+        
+        .assignment-badge {
+            background-color: var(--success-color);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+        
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.35rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            text-decoration: none;
+            border: 1px solid;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            margin-right: 0.25rem;
+        }
+        
+        .btn-assign {
+            background-color: transparent;
+            border-color: var(--info-color);
+            color: var(--info-color);
+        }
+        
+        .btn-assign:hover {
+            background-color: var(--info-color);
+            color: #fff;
+        }
+        
+        .btn-edit {
+            background-color: transparent;
+            border-color: var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .btn-edit:hover {
+            background-color: var(--warning-color);
+            color: #fff;
+        }
+        
+        .btn-delete {
+            background-color: transparent;
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+        
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+        
+        /* Assignment section */
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background-color: #f8f9fc;
+            border: 1px solid #e3e6f0;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .assignment-info {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .remove-assignment-btn {
+            background-color: var(--danger-color);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .remove-assignment-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Success message */
+        .success-message {
+            background-color: var(--success-color);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar-container {
+                width: 100%;
+                position: relative;
+                height: auto;
+                z-index: 1;
+            }
+            
+            .content-wrapper {
+                margin-left: 0;
+            }
+            
+            .classrooms-table {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar (identique au template) -->
+    <div class="sidebar-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a class="sidebar-brand" href="#" style="text-decoration: none;">
+                    <div class="sidebar-brand-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="sidebar-brand-text">GestEdu</div>
+                </a>
+            </div>
+
+            <div class="sidebar-content">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+
+                    <hr class="sidebar-divider">
+
+                    <div class="sidebar-heading">Gestion</div>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students">
+                            <i class="fas fa-fw fa-user-graduate"></i>
+                            <span>Étudiants</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/teachers">
+                            <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                            <span>Enseignants</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/parents">
+                            <i class="fas fa-fw fa-users"></i>
+                            <span>Parents</span>
+                        </a>
+                    </li>
+
+                    <hr class="sidebar-divider">
+
+                    <div class="sidebar-heading">Académique</div>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/classes">
+                            <i class="fas fa-fw fa-school"></i>
+                            <span>Classes</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subjects">
+                            <i class="fas fa-fw fa-book"></i>
+                            <span>Matières</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedules">
+                            <i class="fas fa-fw fa-calendar-alt"></i>
+                            <span>Emploi du temps</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/examinations">
+                            <i class="fas fa-fw fa-file-alt"></i>
+                            <span>Examens</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/attendance">
+                            <i class="fas fa-fw fa-clipboard-check"></i>
+                            <span>Présences</span>
+                        </a>
+                    </li>
+
+                    <hr class="sidebar-divider">
+
+                    <div class="sidebar-heading">Administration</div>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="true" aria-controls="collapseSettings">
+                            <i class="fas fa-fw fa-cog"></i>
+                            <span>Paramètres</span>
+                        </a>
+                        <div id="collapseSettings" class="collapse show">
+                            <div class="collapse-inner">
+                                <ul>
+                                    <li><a class="collapse-item" href="account-confirmation-index.html" style="text-decoration: none;">Confirmation des comptes</a></li>
+                                    <li><a class="collapse-item active" href="#" style="text-decoration: none;">Structure scolaire</a></li>
+                                    <li><a class="collapse-item" href="#" style="text-decoration: none;">Rôles et permissions</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/payments">
+                            <i class="fas fa-fw fa-credit-card"></i>
+                            <span>Paiements</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">
+                            <i class="fas fa-fw fa-chart-area"></i>
+                            <span>Rapports</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/messages">
+                            <i class="fas fa-fw fa-envelope"></i>
+                            <span>Messages</span>
+                        </a>
+                    </li>
+
+                    <hr class="sidebar-divider d-none d-md-block">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand topbar static-top shadow">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell fa-fw"></i>
+                        <span class="badge badge-danger badge-counter">3+</span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin Système</span>
+                        <img class="img-profile rounded-circle" src="https://via.placeholder.com/32x32" width="32" height="32">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Structure scolaire - Salles de classe</h1>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#classroomModal">
+                    <i class="fas fa-plus fa-sm text-white-50 me-1"></i>Ajouter une salle
+                </button>
+            </div>
+
+            <!-- Structure Navigation -->
+            <div class="structure-nav">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link" href="school-structure-study-levels.html">
+                            <i class="fas fa-graduation-cap me-2"></i>Niveaux d'études
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="school-structure-subjects.html">
+                            <i class="fas fa-book me-2"></i>Matières et coefficients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-door-open me-2"></i>Salles de classe
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check me-2"></i>
+                <span id="successText"></span>
+            </div>
+
+            <!-- Classrooms Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Liste des salles de classe</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table classrooms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Salle</th>
+                                    <th>Capacité</th>
+                                    <th>Bâtiment</th>
+                                    <th>Équipements</th>
+                                    <th>Classes assignées</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-classroom-id="1">
+                                    <td>
+                                        <strong>Salle A101</strong><br>
+                                        <small class="text-muted">Rez-de-chaussée</small>
+                                    </td>
+                                    <td><span class="capacity-badge">30 places</span></td>
+                                    <td>Bâtiment A</td>
+                                    <td>
+                                        <div class="equipment-list">
+                                            Tableau interactif, Projecteur, Wi-Fi
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="assignment-badge">6ème A</span>
+                                        <span class="assignment-badge">6ème B</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-assign" onclick="openAssignmentModal(1, 'Salle A101')">
+                                            <i class="fas fa-users me-1"></i>Assigner
+                                        </button>
+                                        <button class="action-btn btn-edit" onclick="editClassroom(1)">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </button>
+                                        <button class="action-btn btn-delete" onclick="deleteClassroom(1)">
+                                            <i class="fas fa-trash me-1"></i>Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-classroom-id="2">
+                                    <td>
+                                        <strong>Salle B205</strong><br>
+                                        <small class="text-muted">2ème étage</small>
+                                    </td>
+                                    <td><span class="capacity-badge">25 places</span></td>
+                                    <td>Bâtiment B</td>
+                                    <td>
+                                        <div class="equipment-list">
+                                            Tableau blanc, Ordinateur
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="assignment-badge">5ème C</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-assign" onclick="openAssignmentModal(2, 'Salle B205')">
+                                            <i class="fas fa-users me-1"></i>Assigner
+                                        </button>
+                                        <button class="action-btn btn-edit" onclick="editClassroom(2)">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </button>
+                                        <button class="action-btn btn-delete" onclick="deleteClassroom(2)">
+                                            <i class="fas fa-trash me-1"></i>Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-classroom-id="3">
+                                    <td>
+                                        <strong>Laboratoire Sciences</strong><br>
+                                        <small class="text-muted">1er étage</small>
+                                    </td>
+                                    <td><span class="capacity-badge">20 places</span></td>
+                                    <td>Bâtiment C</td>
+                                    <td>
+                                        <div class="equipment-list">
+                                            Paillasses, Microscopes, Hotte
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="assignment-badge">4ème A</span>
+                                        <span class="assignment-badge">3ème B</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-assign" onclick="openAssignmentModal(3, 'Laboratoire Sciences')">
+                                            <i class="fas fa-users me-1"></i>Assigner
+                                        </button>
+                                        <button class="action-btn btn-edit" onclick="editClassroom(3)">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </button>
+                                        <button class="action-btn btn-delete" onclick="deleteClassroom(3)">
+                                            <i class="fas fa-trash me-1"></i>Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-classroom-id="4">
+                                    <td>
+                                        <strong>Salle Informatique</strong><br>
+                                        <small class="text-muted">Rez-de-chaussée</small>
+                                    </td>
+                                    <td><span class="capacity-badge">24 places</span></td>
+                                    <td>Bâtiment A</td>
+                                    <td>
+                                        <div class="equipment-list">
+                                            24 Ordinateurs, Projecteur, Réseau
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="assignment-badge">2nde A</span>
+                                        <span class="assignment-badge">1ère S</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-assign" onclick="openAssignmentModal(4, 'Salle Informatique')">
+                                            <i class="fas fa-users me-1"></i>Assigner
+                                        </button>
+                                        <button class="action-btn btn-edit" onclick="editClassroom(4)">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </button>
+                                        <button class="action-btn btn-delete" onclick="deleteClassroom(4)">
+                                            <i class="fas fa-trash me-1"></i>Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; GestEdu 2023</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Classroom Modal -->
+    <div class="modal fade" id="classroomModal" tabindex="-1" aria-labelledby="classroomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="classroomModalLabel">Ajouter une nouvelle salle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="classroomForm">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="classroomName" class="form-label">Nom de la salle</label>
+                                <input type="text" class="form-control" id="classroomName" name="name" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="classroomCapacity" class="form-label">Capacité</label>
+                                <input type="number" class="form-control" id="classroomCapacity" name="capacity" min="1" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="classroomBuilding" class="form-label">Bâtiment</label>
+                                <input type="text" class="form-control" id="classroomBuilding" name="building">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="classroomFloor" class="form-label">Étage</label>
+                                <select class="form-select" id="classroomFloor" name="floor">
+                                    <option value="">Sélectionner un étage</option>
+                                    <option value="0">Rez-de-chaussée</option>
+                                    <option value="1">1er étage</option>
+                                    <option value="2">2ème étage</option>
+                                    <option value="3">3ème étage</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="classroomEquipment" class="form-label">Équipements</label>
+                            <textarea class="form-control" id="classroomEquipment" name="equipment" rows="3" placeholder="Liste des équipements disponibles..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="saveClassroom()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignmentModalLabel">Assigner des classes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignmentForm">
+                        <input type="hidden" id="assignmentClassroomId" name="classroom_id">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Classes actuellement assignées</label>
+                            <div id="currentAssignments"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="assignmentLevel" class="form-label">Niveau d'étude</label>
+                            <select class="form-select" id="assignmentLevel" name="study_level" onchange="loadGroups()">
+                                <option value="">Sélectionner un niveau</option>
+                                <option value="1">Sixième</option>
+                                <option value="2">Cinquième</option>
+                                <option value="3">Quatrième</option>
+                                <option value="4">Troisième</option>
+                                <option value="5">Seconde</option>
+                                <option value="6">Première</option>
+                                <option value="7">Terminale</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="assignmentGroup" class="form-label">Groupe</label>
+                            <select class="form-select" id="assignmentGroup" name="group" disabled>
+                                <option value="">Sélectionner d'abord un niveau</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" onclick="addAssignment()">Assigner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts -->
+    <script>
+        let currentClassroomId = null;
+        let isEditing = false;
+
+        function editClassroom(classroomId) {
+            isEditing = true;
+            currentClassroomId = classroomId;
+            
+            // Simuler le chargement des données
+            const mockData = {
+                1: { name: 'Salle A101', capacity: 30, building: 'Bâtiment A', floor: '0', equipment: 'Tableau interactif, Projecteur, Wi-Fi' },
+                2: { name: 'Salle B205', capacity: 25, building: 'Bâtiment B', floor: '2', equipment: 'Tableau blanc, Ordinateur' },
+                3: { name: 'Laboratoire Sciences', capacity: 20, building: 'Bâtiment C', floor: '1', equipment: 'Paillasses, Microscopes, Hotte' },
+                4: { name: 'Salle Informatique', capacity: 24, building: 'Bâtiment A', floor: '0', equipment: '24 Ordinateurs, Projecteur, Réseau' }
+            };
+            
+            const data = mockData[classroomId];
+            if (data) {
+                document.getElementById('classroomModalLabel').textContent = 'Modifier la salle';
+                document.getElementById('classroomName').value = data.name;
+                document.getElementById('classroomCapacity').value = data.capacity;
+                document.getElementById('classroomBuilding').value = data.building;
+                document.getElementById('classroomFloor').value = data.floor;
+                document.getElementById('classroomEquipment').value = data.equipment;
+                
+                const modal = new bootstrap.Modal(document.getElementById('classroomModal'));
+                modal.show();
+            }
+        }
+
+        function deleteClassroom(classroomId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette salle de classe ?')) {
+                fetch(`/admin/school-structure/classrooms/${classroomId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`[data-classroom-id="${classroomId}"]`).remove();
+                        showSuccessMessage('Salle de classe supprimée avec succès');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la suppression');
+                });
+            }
+        }
+
+        function saveClassroom() {
+            const form = document.getElementById('classroomForm');
+            const formData = new FormData(form);
+            
+            const url = isEditing ? 
+                `/admin/school-structure/classrooms/${currentClassroomId}` : 
+                '/admin/school-structure/classrooms';
+                
+            const method = isEditing ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('classroomModal'));
+                    modal.hide();
+                    
+                    if (isEditing) {
+                        showSuccessMessage('Salle de classe modifiée avec succès');
+                        // Mettre à jour la ligne du tableau
+                        updateClassroomRow(currentClassroomId, data.classroom);
+                    } else {
+                        showSuccessMessage('Nouvelle salle de classe ajoutée avec succès');
+                        // Ajouter une nouvelle ligne au tableau
+                        addClassroomRow(data.classroom);
+                    }
+                    
+                    resetForm();
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'enregistrement');
+            });
+        }
+
+        function openAssignmentModal(classroomId, classroomName) {
+            currentClassroomId = classroomId;
+            document.getElementById('assignmentModalLabel').textContent = `Assigner des classes - ${classroomName}`;
+            document.getElementById('assignmentClassroomId').value = classroomId;
+            
+            // Charger les assignations actuelles
+            loadCurrentAssignments(classroomId);
+            
+            const modal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+            modal.show();
+        }
+
+        function loadCurrentAssignments(classroomId) {
+            const container = document.getElementById('currentAssignments');
+            
+            // Simuler les données d'assignation
+            const mockAssignments = {
+                1: [{ level: 'Sixième', group: 'A' }, { level: 'Sixième', group: 'B' }],
+                2: [{ level: 'Cinquième', group: 'C' }],
+                3: [{ level: 'Quatrième', group: 'A' }, { level: 'Troisième', group: 'B' }],
+                4: [{ level: 'Seconde', group: 'A' }, { level: 'Première', group: 'S' }]
+            };
+            
+            const assignments = mockAssignments[classroomId] || [];
+            
+            container.innerHTML = assignments.map(assignment => `
+                <div class="assignment-item">
+                    <span class="assignment-info">${assignment.level} ${assignment.group}</span>
+                    <button class="remove-assignment-btn" onclick="removeAssignment(${classroomId}, '${assignment.level}', '${assignment.group}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function loadGroups() {
+            const levelSelect = document.getElementById('assignmentLevel');
+            const groupSelect = document.getElementById('assignmentGroup');
+            
+            if (!levelSelect.value) {
+                groupSelect.disabled = true;
+                groupSelect.innerHTML = '<option value="">Sélectionner d\'abord un niveau</option>';
+                return;
+            }
+            
+            // Simuler le chargement des groupes
+            const mockGroups = {
+                1: ['A', 'B', 'C'], // Sixième
+                2: ['A', 'B', 'C'], // Cinquième
+                3: ['A', 'B', 'C'], // Quatrième
+                4: ['A', 'B', 'C'], // Troisième
+                5: ['A', 'B', 'C'], // Seconde
+                6: ['S', 'ES', 'L'], // Première
+                7: ['S', 'ES', 'L']  // Terminale
+            };
+            
+            const groups = mockGroups[levelSelect.value] || [];
+            
+            groupSelect.disabled = false;
+            groupSelect.innerHTML = '<option value="">Sélectionner un groupe</option>' +
+                groups.map(group => `<option value="${group}">${group}</option>`).join('');
+        }
+
+        function addAssignment() {
+            const levelSelect = document.getElementById('assignmentLevel');
+            const groupSelect = document.getElementById('assignmentGroup');
+            
+            if (!levelSelect.value || !groupSelect.value) {
+                alert('Veuillez sélectionner un niveau et un groupe');
+                return;
+            }
+            
+            const classroomId = document.getElementById('assignmentClassroomId').value;
+            
+            fetch(`/admin/school-structure/classrooms/${classroomId}/assign`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify({
+                    study_level: levelSelect.value,
+                    group: groupSelect.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage('Classe assignée avec succès');
+                    loadCurrentAssignments(classroomId);
+                    updateClassroomAssignments(classroomId);
+                    
+                    // Reset les selects
+                    levelSelect.value = '';
+                    groupSelect.value = '';
+                    groupSelect.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'assignation');
+            });
+        }
+
+        function removeAssignment(classroomId, level, group) {
+            if (confirm(`Êtes-vous sûr de vouloir retirer ${level} ${group} de cette salle ?`)) {
+                fetch(`/admin/school-structure/classrooms/${classroomId}/unassign`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({ level: level, group: group })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessMessage('Assignation supprimée avec succès');
+                        loadCurrentAssignments(classroomId);
+                        updateClassroomAssignments(classroomId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la suppression');
+                });
+            }
+        }
+
+        function resetForm() {
+            isEditing = false;
+            currentClassroomId = null;
+            document.getElementById('classroomModalLabel').textContent = 'Ajouter une nouvelle salle';
+            document.getElementById('classroomForm').reset();
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateClassroomRow(classroomId, classroom) {
+            // Mettre à jour la ligne du tableau avec les nouvelles données
+            console.log(`Mise à jour de la salle ${classroomId}:`, classroom);
+        }
+
+        function addClassroomRow(classroom) {
+            // Ajouter une nouvelle ligne au tableau
+            console.log('Ajout de la nouvelle salle:', classroom);
+        }
+
+        function updateClassroomAssignments(classroomId) {
+            // Mettre à jour la colonne des assignations dans le tableau principal
+            console.log(`Mise à jour des assignations pour la salle ${classroomId}`);
+        }
+
+        // Reset form when modal is hidden
+        document.getElementById('classroomModal').addEventListener('hidden.bs.modal', resetForm);
+    </script>
+</body>
+</html>
