@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/children/{id}', [ParentController::class, 'showChildren'])->name('showChildren');
         Route::get('/student/{id}', [ParentController::class, 'showStudentProfile'])->name('student.profile');
         Route::get('/student-registration', [StudentController::class, 'studentRegistration'])->name('student-registration');
+        //
     });
 
     Route::get("/verification/{id}", [UserController::class, "showVerificationForm"])->name("showVerificationForm");
