@@ -186,8 +186,8 @@
                                         <div class="d-flex align-items-center mb-3">
                                             <img src="{{ $user->profil_picture ? Storage::url($user->profil_picture) : asset('assets/img/default.webp') }}"  alt="Thomas Dupont"  class="rounded-circle me-3"  style="width: 60px; height: 60px; object-fit: cover;" >
                                             <div>
-                                                <h5 class="card-title mb-1">{{ $child->getFullNameAttribute() }}</h5>
-                                                <span class="badge bg-primary">{{ $child->currentStudyLevels(date("Y") . "-" . (date("Y")+1)) }}</span>
+                                                <h5 class="card-title mb-1">{{ $child->getFullName() }}</h5>
+                                                <span class="badge bg-primary">{{ $child->currentInscription(date("Y") . "-" . (date("Y")+1))->study_level->specification ?? $child->latestInscription()->study_level->specification }}</span>
                                             </div>
                                         </div>
                                         
@@ -196,7 +196,7 @@
                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                     Niveau d'étude
                                                 </div>
-                                                <div class="h6 mb-0 font-weight-bold text-gray-800">{{ $child->currentStudyLevels(date("Y") . "-" . (date("Y")+1)) }}</div>
+                                                <div class="h6 mb-0 font-weight-bold text-gray-800">{{ $child->currentInscription(date("Y") . "-" . (date("Y")+1))->study_level->specification ?? $child->latestInscription()->study_level->specification }}</div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -207,7 +207,7 @@
                                         </div>
                                         
                                         <div class="text-center">
-                                            <a href="#" class="btn btn-sm btn-primary">
+                                            <a href="{{ route('parent.student.profile', $child->id)}}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-user me-1"></i>Voir le profil
                                             </a>
                                         </div>

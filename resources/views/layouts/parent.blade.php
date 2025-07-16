@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -75,6 +76,17 @@
             margin-right: 0.5rem;
         }
 
+        /* Navbar desktop items - hidden on mobile */
+        .navbar-desktop-items {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-desktop-items {
+                display: none;
+            }
+        }
+
         .navbar-parent .navbar-nav .nav-link {
             color: var(--dark-color);
             padding: 0 0.75rem;
@@ -90,6 +102,28 @@
         .navbar-parent .dropdown-menu {
             border: none;
             box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .15);
+        }
+
+        /* Mobile sidebar toggle */
+        .mobile-sidebar-toggle {
+            display: none;
+            background: none;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-sidebar-toggle:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-sidebar-toggle {
+                display: inline-block;
+            }
         }
 
         /* Layout Container */
@@ -151,6 +185,13 @@
             padding: 1.5rem 1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-user-profile {
+                display: block;
+            }
         }
 
         .sidebar-user-profile img {
@@ -291,17 +332,6 @@
             padding-top: calc(var(--navbar-height) + 60px);
         }
 
-        /* Mobile sidebar toggle */
-        .mobile-sidebar-toggle {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-sidebar-toggle {
-                display: inline-block;
-            }
-        }
-
         /* Overlay for mobile */
         .sidebar-overlay {
             display: none;
@@ -368,12 +398,12 @@
             </a>
 
             <!-- Mobile sidebar toggle -->
-            <button class="btn btn-outline-primary mobile-sidebar-toggle" type="button" id="sidebarToggle">
+            <button class="mobile-sidebar-toggle" type="button" id="sidebarToggle">
                 <i class="fas fa-bars"></i>
             </button>
 
-            <!-- Navbar items -->
-            <div class="navbar-nav ms-auto">
+            <!-- Desktop Navbar items -->
+            <div class="navbar-desktop-items ms-auto">
                 <!-- Search -->
                 <div class="nav-item dropdown d-none d-lg-block me-3">
                     <form class="d-flex">
@@ -437,7 +467,7 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-content">
                 <!-- User Profile Section (visible on mobile) -->
-                <div class="sidebar-user-profile d-md-none">
+                <div class="sidebar-user-profile">
                     <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=28a745&color=ffffff" alt="Profile">
                     <div class="user-name">{{ Auth::user()->getFullName() }}</div>
                     <div class="user-role">Parent</div>

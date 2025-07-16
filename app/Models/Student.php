@@ -48,7 +48,7 @@ class Student extends Model
 
     public function currentInscription($schoolYearId)
     {
-        return $this->inscriptions()->where("school_year_id", $schoolYearId);
+        return $this->inscriptions()->where("school_year_id", $schoolYearId)->first();
     }
 
     public function latestInscription()
@@ -60,7 +60,7 @@ class Student extends Model
     
 
 
-    public function currentStudyLevels($schoolYearId): BelongsToMany
+    public function currentStudyLevels($schoolYearId)
     {
         return $this->inscriptions()->where("school_year_id", $schoolYearId)->first();
     }
@@ -83,7 +83,7 @@ class Student extends Model
     /**
      * Obtenir le nom complet de l'étudiant.
      */
-    public function getFullNameAttribute(): string
+    public function getFullName(): string
     {
         return "{$this->firstname} {$this->lastname}";
     }

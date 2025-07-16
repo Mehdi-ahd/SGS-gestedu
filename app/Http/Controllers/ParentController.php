@@ -275,4 +275,11 @@ class ParentController extends Controller
             "children" => $children,
         ]);
     }
+
+    public function showStudentProfile($id) {
+        $child = Student::find($id);
+        return view('children.child-details', [
+            "child" => $child,
+        ]);
+    }
 }
