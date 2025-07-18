@@ -28,7 +28,7 @@
     </div>
     @endif
 
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="{{ route("parent.studentRegistrationProcess")}}" method="POST" enctype="multipart/form-data">
         @csrf
         
         <div class="row">
@@ -122,11 +122,11 @@
                                 <label for="study_level_id" class="form-label">Niveau d'étude <span class="text-danger">*</span></label>
                                 <select class="form-select @error('study_level_id') is-invalid @enderror" id="study_level_id" name="study_level_id" required>
                                     <option value="" selected disabled>Sélectionner un niveau</option>
-                                    {{-- @foreach ($study_levels as $study_level)
+                                    @foreach ($study_levels as $study_level)
                                         <option value="{{$study_level->id}}" {{ old('study_level_id') == $study_level->id ? 'selected' : '' }}>
                                             {{$study_level->specification}}
                                         </option>
-                                    @endforeach --}}
+                                    @endforeach 
                                 </select>
                                 @error('study_level_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -185,207 +185,218 @@
                     </div>
                 </div>
 
-                <!-- Informations des parents -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-users me-2"></i>
-                            Informations des parents
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <!-- Père -->
-                        <div class="mb-4">
-                            <h6 class="text-secondary mb-3">
+                @if (Auth::user()->sex === "F")
+                    <!-- Information du père -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
                                 <i class="fas fa-male me-2"></i>
-                                Informations du père
+                                Information du père
                             </h6>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="father_firstname" class="form-label">Prénom du père <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('father_firstname') is-invalid @enderror" id="father_firstname" name="father_firstname" value="{{ old('father_firstname') }}" required>
-                                    @error('father_firstname')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="father_lastname" class="form-label">Nom du père <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('father_lastname') is-invalid @enderror" id="father_lastname" name="father_lastname" value="{{ old('father_lastname') }}" required>
-                                    @error('father_lastname')
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="toggleFatherExisting" name="toggle_father_existing">
+                                <label class="form-check-label" for="toggleFatherExisting">Utiliser un père existant</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Sélection d'un père existant -->
+                            <div id="existingFatherSection" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="father_id" class="form-label">Sélectionner le père</label>
+                                    <select class="form-select @error('father_id') is-invalid @enderror" id="father_id" name="father_id">
+                                        <option value="" selected disabled>Sélectionner</option>
+                                        @forelse ($fathers as $father)
+                                            <option value="{{ $father->id }}" {{ old('father_id') == $father->id ? 'selected' : '' }}>
+                                                {{ $father->getFullNameAttribute() }}
+                                            </option>
+                                        @empty
+                                            <option value="">Aucun père à associer</option>
+                                        @endforelse
+                                    </select>
+                                    @error('father_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="father_phone" class="form-label">Téléphone du père <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control @error('father_phone') is-invalid @enderror" id="father_phone" name="father_phone" value="{{ old('father_phone') }}" required>
-                                    @error('father_phone')
+                            
+                            <!-- Ajout d'un nouveau père -->
+                            <div id="newFatherSection">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="father_firstname" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('father_firstname') is-invalid @enderror" id="father_firstname" name="father_firstname" value="{{ old('father_firstname') }}" required>
+                                        @error('father_firstname')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="father_lastname" class="form-label">Nom <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('father_lastname') is-invalid @enderror" id="father_lastname" name="father_lastname" value="{{ old('father_lastname') }}" required>
+                                        @error('father_lastname')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="father_birthday" class="form-label">Date de naissance</label>
+                                        <input type="date" class="form-control @error('father_birthday') is-invalid @enderror" id="father_birthday" name="father_birthday" value="{{ old('father_birthday') }}">
+                                        @error('father_birthday')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="father_phone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control @error('father_phone') is-invalid @enderror" id="father_phone" name="father_phone" value="{{ old('father_phone') }}" required>
+                                        @error('father_phone')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="father_email" class="form-label">Email</label>
+                                        <input type="email" class="form-control @error('father_email') is-invalid @enderror" id="father_email" name="father_email" value="{{ old('father_email') }}">
+                                        @error('father_email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="father_job" class="form-label">Profession</label>
+                                        <input type="text" class="form-control @error('father_job') is-invalid @enderror" id="father_job" name="father_job" value="{{ old('father_job') }}">
+                                        @error('father_job')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="father_home_address" class="form-label">Adresse domicile</label>
+                                    <textarea class="form-control @error('father_home_address') is-invalid @enderror" id="father_home_address" name="father_home_address" rows="2">{{ old('father_home_address') }}</textarea>
+                                    @error('father_home_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="father_email" class="form-label">Email du père</label>
-                                    <input type="email" class="form-control @error('father_email') is-invalid @enderror" id="father_email" name="father_email" value="{{ old('father_email') }}">
-                                    @error('father_email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="father_job" class="form-label">Profession du père</label>
-                                    <input type="text" class="form-control @error('father_job') is-invalid @enderror" id="father_job" name="father_job" value="{{ old('father_job') }}">
-                                    @error('father_job')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="father_work_address" class="form-label">Lieu de travail du père</label>
-                                    <input type="text" class="form-control @error('father_work_address') is-invalid @enderror" id="father_work_address" name="father_work_address" value="{{ old('father_work_address') }}">
+                                
+                                <div class="mb-3">
+                                    <label for="father_work_address" class="form-label">Adresse professionnelle</label>
+                                    <textarea class="form-control @error('father_work_address') is-invalid @enderror" id="father_work_address" name="father_work_address" rows="2">{{ old('father_work_address') }}</textarea>
                                     @error('father_work_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                         </div>
-
-                        <hr>
-
-                        <!-- Mère -->
-                        <div class="mb-4">
-                            <h6 class="text-secondary mb-3">
+                    </div>
+                @else
+                    <!-- Information de la mère -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
                                 <i class="fas fa-female me-2"></i>
-                                Informations de la mère
+                                Information de la mère
                             </h6>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="mother_firstname" class="form-label">Prénom de la mère <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('mother_firstname') is-invalid @enderror" id="mother_firstname" name="mother_firstname" value="{{ old('mother_firstname') }}" required>
-                                    @error('mother_firstname')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="mother_lastname" class="form-label">Nom de la mère <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('mother_lastname') is-invalid @enderror" id="mother_lastname" name="mother_lastname" value="{{ old('mother_lastname') }}" required>
-                                    @error('mother_lastname')
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="toggleMotherExisting" name="toggle_mother_existing">
+                                <label class="form-check-label" for="toggleMotherExisting">Utiliser une mère existante</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Sélection d'une mère existante -->
+                            <div id="existingMotherSection" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="mother_id" class="form-label">Sélectionner la mère</label>
+                                    <select class="form-select @error('mother_id') is-invalid @enderror" id="mother_id" name="mother_id">
+                                        <option value="" selected disabled>Sélectionner</option>
+                                        @forelse ($mothers as $mother)
+                                            <option value="{{ $mother->id }}" {{ old('mother_id') == $mother->id ? 'selected' : '' }}>
+                                                {{ $mother->getFullNameAttribute() }}
+                                            </option>
+                                        @empty
+                                            <option value="">Aucune mère à associer</option>
+                                        @endforelse
+                                    </select>
+                                    @error('mother_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="mother_phone" class="form-label">Téléphone de la mère <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control @error('mother_phone') is-invalid @enderror" id="mother_phone" name="mother_phone" value="{{ old('mother_phone') }}" required>
-                                    @error('mother_phone')
+                            
+                            <!-- Ajout d'une nouvelle mère -->
+                            <div id="newMotherSection">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="mother_firstname" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('mother_firstname') is-invalid @enderror" id="mother_firstname" name="mother_firstname" value="{{ old('mother_firstname') }}" required>
+                                        @error('mother_firstname')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mother_lastname" class="form-label">Nom <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('mother_lastname') is-invalid @enderror" id="mother_lastname" name="mother_lastname" value="{{ old('mother_lastname') }}" required>
+                                        @error('mother_lastname')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="mother_birthday" class="form-label">Date de naissance</label>
+                                        <input type="date" class="form-control @error('mother_birthday') is-invalid @enderror" id="mother_birthday" name="mother_birthday" value="{{ old('mother_birthday') }}">
+                                        @error('mother_birthday')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mother_phone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control @error('mother_phone') is-invalid @enderror" id="mother_phone" name="mother_phone" value="{{ old('mother_phone') }}" required>
+                                        @error('mother_phone')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="mother_email" class="form-label">Email</label>
+                                        <input type="email" class="form-control @error('mother_email') is-invalid @enderror" id="mother_email" name="mother_email" value="{{ old('mother_email') }}">
+                                        @error('mother_email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mother_job" class="form-label">Profession</label>
+                                        <input type="text" class="form-control @error('mother_job') is-invalid @enderror" id="mother_job" name="mother_job" value="{{ old('mother_job') }}">
+                                        @error('mother_job')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="mother_home_address" class="form-label">Adresse domicile</label>
+                                    <textarea class="form-control @error('mother_home_address') is-invalid @enderror" id="mother_home_address" name="mother_home_address" rows="2">{{ old('mother_home_address') }}</textarea>
+                                    @error('mother_home_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="mother_email" class="form-label">Email de la mère</label>
-                                    <input type="email" class="form-control @error('mother_email') is-invalid @enderror" id="mother_email" name="mother_email" value="{{ old('mother_email') }}">
-                                    @error('mother_email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="mother_job" class="form-label">Profession de la mère</label>
-                                    <input type="text" class="form-control @error('mother_job') is-invalid @enderror" id="mother_job" name="mother_job" value="{{ old('mother_job') }}">
-                                    @error('mother_job')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="mother_work_address" class="form-label">Lieu de travail de la mère</label>
-                                    <input type="text" class="form-control @error('mother_work_address') is-invalid @enderror" id="mother_work_address" name="mother_work_address" value="{{ old('mother_work_address') }}">
+                                
+                                <div class="mb-3">
+                                    <label for="mother_work_address" class="form-label">Adresse professionnelle</label>
+                                    <textarea class="form-control @error('mother_work_address') is-invalid @enderror" id="mother_work_address" name="mother_work_address" rows="2">{{ old('mother_work_address') }}</textarea>
                                     @error('mother_work_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                         </div>
-
-                        <hr>
-
-                        <!-- Tuteur/Personne de contact -->
-                        <div class="mb-4">
-                            <h6 class="text-secondary mb-3">
-                                <i class="fas fa-user-shield me-2"></i>
-                                Personne de contact/Tuteur (optionnel)
-                            </h6>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="guardian_firstname" class="form-label">Prénom du tuteur</label>
-                                    <input type="text" class="form-control @error('guardian_firstname') is-invalid @enderror" id="guardian_firstname" name="guardian_firstname" value="{{ old('guardian_firstname') }}">
-                                    @error('guardian_firstname')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="guardian_lastname" class="form-label">Nom du tuteur</label>
-                                    <input type="text" class="form-control @error('guardian_lastname') is-invalid @enderror" id="guardian_lastname" name="guardian_lastname" value="{{ old('guardian_lastname') }}">
-                                    @error('guardian_lastname')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="guardian_phone" class="form-label">Téléphone du tuteur</label>
-                                    <input type="tel" class="form-control @error('guardian_phone') is-invalid @enderror" id="guardian_phone" name="guardian_phone" value="{{ old('guardian_phone') }}">
-                                    @error('guardian_phone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="guardian_relation" class="form-label">Lien avec l'enfant</label>
-                                    <select class="form-select @error('guardian_relation') is-invalid @enderror" id="guardian_relation" name="guardian_relation">
-                                        <option value="">Sélectionner</option>
-                                        <option value="oncle" {{ old('guardian_relation') == 'oncle' ? 'selected' : '' }}>Oncle</option>
-                                        <option value="tante" {{ old('guardian_relation') == 'tante' ? 'selected' : '' }}>Tante</option>
-                                        <option value="grand-pere" {{ old('guardian_relation') == 'grand-pere' ? 'selected' : '' }}>Grand-père</option>
-                                        <option value="grand-mere" {{ old('guardian_relation') == 'grand-mere' ? 'selected' : '' }}>Grand-mère</option>
-                                        <option value="autre" {{ old('guardian_relation') == 'autre' ? 'selected' : '' }}>Autre</option>
-                                    </select>
-                                    @error('guardian_relation')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
-
-                <!-- Documents d'identité parents -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-id-card me-2"></i>
-                            Documents d'identité des parents
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Veuillez télécharger les documents d'identité des deux parents (CNI, passeport, etc.)
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="parent_identity_documents" class="form-label">Documents d'identité <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control @error('parent_identity_documents') is-invalid @enderror" id="parent_identity_documents" name="parent_identity_documents[]" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple required>
-                            <div class="form-text">Vous pouvez sélectionner plusieurs fichiers. Formats acceptés: PDF, Images, Word</div>
-                            @error('parent_identity_documents')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div id="selected-files" class="mt-3"></div>
-                    </div>
-                </div>
-
+                @endif
+                
                 <!-- Boutons d'action -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -463,6 +474,52 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Toggle pour le formulaire du père
+        const toggleFatherExistingCheckbox = document.getElementById('toggleFatherExisting');
+        const existingFatherSection = document.getElementById('existingFatherSection');
+        const newFatherSection = document.getElementById('newFatherSection');
+        
+        toggleFatherExistingCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                existingFatherSection.style.display = 'block';
+                newFatherSection.style.display = 'none';
+                // Désactiver les champs requis du nouveau père
+                newFatherSection.querySelectorAll('input[required]').forEach(input => {
+                    input.removeAttribute('required');
+                });
+            } else {
+                existingFatherSection.style.display = 'none';
+                newFatherSection.style.display = 'block';
+                // Réactiver les champs requis du nouveau père
+                document.getElementById('father_firstname').setAttribute('required', '');
+                document.getElementById('father_lastname').setAttribute('required', '');
+                document.getElementById('father_phone').setAttribute('required', '');
+            }
+        });
+        
+        // Toggle pour le formulaire de la mère
+        const toggleMotherExistingCheckbox = document.getElementById('toggleMotherExisting');
+        const existingMotherSection = document.getElementById('existingMotherSection');
+        const newMotherSection = document.getElementById('newMotherSection');
+        
+        toggleMotherExistingCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                existingMotherSection.style.display = 'block';
+                newMotherSection.style.display = 'none';
+                // Désactiver les champs requis de la nouvelle mère
+                newMotherSection.querySelectorAll('input[required]').forEach(input => {
+                    input.removeAttribute('required');
+                });
+            } else {
+                existingMotherSection.style.display = 'none';
+                newMotherSection.style.display = 'block';
+                // Réactiver les champs requis de la nouvelle mère
+                document.getElementById('mother_firstname').setAttribute('required', '');
+                document.getElementById('mother_lastname').setAttribute('required', '');
+                document.getElementById('mother_phone').setAttribute('required', '');
+            }
+        });
+        
         // Prévisualisation de l'image
         window.previewImage = function(input) {
             if (input.files && input.files[0]) {
@@ -473,103 +530,6 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        
-        // Gestion des fichiers multiples
-        const parentDocsInput = document.getElementById('parent_identity_documents');
-        const selectedFilesDiv = document.getElementById('selected-files');
-        
-        parentDocsInput.addEventListener('change', function() {
-            selectedFilesDiv.innerHTML = '';
-            
-            if (this.files.length > 0) {
-                const filesList = document.createElement('div');
-                filesList.className = 'selected-files-list';
-                
-                const title = document.createElement('h6');
-                title.textContent = 'Fichiers sélectionnés:';
-                title.className = 'mb-2';
-                filesList.appendChild(title);
-                
-                for (let i = 0; i < this.files.length; i++) {
-                    const file = this.files[i];
-                    const fileDiv = document.createElement('div');
-                    fileDiv.className = 'selected-file d-flex align-items-center mb-2 p-2 bg-light rounded';
-                    
-                    const icon = getFileIcon(file.name);
-                    const fileName = document.createElement('span');
-                    fileName.textContent = file.name;
-                    fileName.className = 'ms-2 flex-grow-1';
-                    
-                    const fileSize = document.createElement('small');
-                    fileSize.textContent = formatFileSize(file.size);
-                    fileSize.className = 'text-muted';
-                    
-                    fileDiv.appendChild(icon);
-                    fileDiv.appendChild(fileName);
-                    fileDiv.appendChild(fileSize);
-                    
-                    filesList.appendChild(fileDiv);
-                }
-                
-                selectedFilesDiv.appendChild(filesList);
-            }
-        });
-        
-        function getFileIcon(filename) {
-            const icon = document.createElement('i');
-            icon.className = 'fas me-2';
-            
-            const ext = filename.split('.').pop().toLowerCase();
-            
-            switch (ext) {
-                case 'pdf':
-                    icon.classList.add('fa-file-pdf', 'text-danger');
-                    break;
-                case 'doc':
-                case 'docx':
-                    icon.classList.add('fa-file-word', 'text-primary');
-                    break;
-                case 'jpg':
-                case 'jpeg':
-                case 'png':
-                case 'gif':
-                    icon.classList.add('fa-file-image', 'text-success');
-                    break;
-                default:
-                    icon.classList.add('fa-file', 'text-secondary');
-            }
-            
-            return icon;
-        }
-        
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Validation du formulaire
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let allValid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    allValid = false;
-                    field.classList.add('is-invalid');
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-            
-            if (!allValid) {
-                e.preventDefault();
-                alert('Veuillez remplir tous les champs obligatoires.');
-            }
-        });
     });
 </script>
 @endsection

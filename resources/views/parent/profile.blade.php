@@ -207,7 +207,7 @@
                                         </div>
                                         
                                         <div class="text-center">
-                                            <a href="{{ route('parent.student.profile', $child->id)}}" class="btn btn-sm btn-primary">
+                                            <a href="{{ route('parent.child.details', $child->id)}}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-user me-1"></i>Voir le profil
                                             </a>
                                         </div>

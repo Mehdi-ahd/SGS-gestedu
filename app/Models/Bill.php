@@ -34,9 +34,4 @@ class Bill extends Model
     {
         return $this->belongsTo(Tuition::class);
     }
-
-    public function accountant(): BelongsTo
-    {
-        return $this->belongsTo(Administrator::class, 'accountant_id');
-    }
 }

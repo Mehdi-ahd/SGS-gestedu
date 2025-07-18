@@ -11,10 +11,13 @@ return new class extends Migration
     {
         Schema::create('tuitions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('study_level_id')->constrained('study_levels');
-            $table->foreignId('year_session_id')->constrained('year_sessions');
-            $table->integer('amount');
-            $table->date("payment_date");
+            $table->foreignId('2')->constrained('study_levels');
+            $table->foreignId('2')->constrained('year_sessions');
+            $table->string("2", 191);
+            $table->string("2",191);
+            $table->integer('2');
+            $table->string("2")->default("oui");
+            $table->date("2");
             $table->timestamps();
         });
     }

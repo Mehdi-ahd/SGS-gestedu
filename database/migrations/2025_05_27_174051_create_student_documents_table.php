@@ -12,12 +12,10 @@ return new class extends Migration
         Schema::create('student_documents', function (Blueprint $table) {
             $table->id();
             $table->enum('document_type', [
+                "Photo d\'identité",
                 'Certificat de naissance', 
                 'Certificat scolaire', 
-                'Photo identité', 
-                'Carte identité nationale', 
-                'CIP', 
-                'Acte de naissance'
+                "Bulletin précédent",
             ]);
             $table->string('document_path', 100);
             $table->foreignId('student_id')->constrained('students');

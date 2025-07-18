@@ -184,7 +184,7 @@
                         <!-- Actions -->
                         <div class="card-footer bg-transparent">
                             <div class="btn-group w-100" role="group">
-                                <a href="" class="btn btn-outline-primary btn-sm">
+                                <a href="{{ route('parent.child.details', $child->id)}}" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-eye me-1"></i>
                                     Détails
                                 </a>

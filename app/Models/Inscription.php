@@ -13,6 +13,9 @@ class Inscription extends Model
         "group_id",
         "study_level_id",
         "school_year_id",
+        'status',
+        "final_average",
+        "verdict"
     ];
 
     public function student(): BelongsTo

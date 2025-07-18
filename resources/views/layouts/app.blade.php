@@ -552,7 +552,7 @@
                     </div>
 
                     {{-- Un point important a revoir: les membres ayant d'autres roles mais avec des enfants inscrits, donc qui ont techniquement le role parent: (|| Auth::user()->students()->count() != 0) --}}
-                    @if (Auth::user()->isParent() )
+                    {{-- @if (Auth::user()->isParent() )
                         <!-- Nav Item - children -->
                         <li class="nav-item">
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsechildren" aria-expanded="false" aria-controls="collapsechildren">
@@ -586,7 +586,7 @@
                                 </div>
                             </div>
                         </li>
-                    @endif
+                    @endif --}}
                     
 
                     <!-- Nav Item - Schedules -->
@@ -636,7 +636,7 @@
                             <div class="collapse-inner rounded">
                                 <ul>
                                     <li><a class="collapse-item" href="{{ route('payments.index') }}">Liste des paiements</a></li>
-                                    <li><a class="collapse-item" href="#">Ajouter un paiement</a></li>
+                                    <li><a class="collapse-item {{ request()->is('payments/create') ? "active" : "" }}" href="{{ route('payments.create')}}">Ajouter un paiement</a></li>
                                     <li><a class="collapse-item" href="#">Types de frais</a></li>
                                 </ul>
                             </div>

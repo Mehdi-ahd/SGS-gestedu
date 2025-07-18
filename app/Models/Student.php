@@ -56,6 +56,11 @@ class Student extends Model
         return $this->inscriptions()->latest()->first();
     }
 
+    public function actualInscription()
+    {
+        return $this->inscriptions()->where("school_year_id", date("Y") . "-" . date("Y")+1);
+    }
+
     //A revoir
     
 

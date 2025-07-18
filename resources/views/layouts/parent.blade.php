@@ -433,7 +433,7 @@
                 <div class="nav-item dropdown">
                     <a class="nav-link d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                         <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=28a745&color=ffffff" alt="Profile" class="rounded-circle me-2" style="width: 32px; height: 32px;">
-                        <span class="d-none d-lg-inline">{{ Auth::user()->getFullName() }}</span>
+                        <span class="d-none d-lg-inline text-dark">{{ Auth::user()->getFullName() }}</span>
                         <i class="fas fa-chevron-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -509,7 +509,7 @@
                     </li>
 
                     <!-- Verification -->
-                    @if(Auth::user()->status !== 'verifié')
+                    @if(Auth::user()->status === 'en attente de soumission')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('parent.verification') ? 'active' : '' }}" href="{{ route('parent.verification') }}">
                                 <i class="fas fa-shield-alt"></i>
@@ -520,7 +520,7 @@
 
                     <!-- Payments -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.payments*') ? 'active' : '' }}" href="#">
+                        <a class="nav-link {{ request()->routeIs('parent.payment.form') ? 'active' : '' }}" href="{{ route("parent.payment.form")}}">
                             <i class="fas fa-credit-card"></i>
                             <span>Paiements</span>
                         </a>

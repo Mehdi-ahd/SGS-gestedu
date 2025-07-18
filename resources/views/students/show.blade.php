@@ -29,9 +29,9 @@
         <div class="card">
             <div class="card-body text-center">
                 <div class="avatar avatar-lg mx-auto mb-3">
-                    <img src="{{ $student->documents->where('document_type', 'Photo identité') ?? asset('assets/img/default.webp')}}" alt="Photo de l'élève" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <img src="{{ Storage::url($student_documents->where("document_type", "Photo d'identité")->first()->document_path)  ?? asset('assets/img/default.webp') }}" alt="Photo de l'élève" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                 </div>
-                <h4 class="card-title">{{ $student->getFullNameAttribute() }} </h4>
+                <h4 class="card-title">{{ $student->getFullName() }} </h4>
                 <p class="text-muted mb-1">ID: {{ $student->id }}</p>
                 <p class="text-muted mb-3">Sa classe: {{ $student->inscriptions()->where("school_year_id", date("Y") . "-" . date("Y")+1)->first()->study_level->specification }}</p>
                 

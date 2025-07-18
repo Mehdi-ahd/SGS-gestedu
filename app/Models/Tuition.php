@@ -12,9 +12,17 @@ class Tuition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'study_level_id',
-        'year_session_id',
-        'amount'
+        "study_level_id",
+        "year_session_id",
+        "motif",
+        "type",
+        "amount",
+        "bond",
+        "due_date",
+    ];
+
+    protected $casts = [
+        "due_date" => "date",
     ];
 
     public function studyLevel(): BelongsTo

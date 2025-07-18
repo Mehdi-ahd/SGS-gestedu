@@ -9,7 +9,7 @@
         <div>
             <h1 class="h3 mb-2 mb-md-0 text-gray-800">
                 <i class="fas fa-user me-2"></i>
-                {{ $child->firstname }} {{ $child->lastname }}
+                {{ $child->getFullName() }}
             </h1>
             <p class="text-muted mb-0">Détails de l'élève</p>
         </div>
@@ -19,7 +19,7 @@
                 <i class="fas fa-graduation-cap me-2"></i>
                 Détails académiques
             </a>
-            <a href="" class="btn btn-outline-secondary">
+            <a href="{{ route('parent.showChildren', Auth()->user()->id)}}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>
                 Retour
             </a>
@@ -41,7 +41,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted">Nom complet</label>
-                            <p class="h6">{{ $child->firstname }} {{ $child->lastname }}</p>
+                            <p class="h6">{{ $child->getFullName() }}</p>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted">Date de naissance</label>
@@ -132,7 +132,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="" 
+                                            <a href="{{ route('parent.child.academic-year-details', ['id' => $child->id, 'year_id' => $inscription->school_year_id]) }}" 
                                                class="btn btn-sm btn-outline-info">
                                                 <i class="fas fa-eye me-1"></i>
                                                 <span class="d-none d-sm-inline">Voir plus</span>

@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudyLevelController;
 use App\Http\Controllers\SubjectController;
@@ -33,6 +34,7 @@ Route::get('/', function () {
 
 Route::get("/rol", function() {
     $roles = [
+        "admin" => "Administrateur",
         "teacher"=>"Professeur",
         "supervisor" => "Parent",
         "accountant" => "Caissier(e)"
@@ -43,6 +45,7 @@ Route::get("/rol", function() {
             "name" => $role_name,
         ]);
     } ;
+    echo "Roles crés avec succès";
 });
 
 // Routes d'authentification - accessibles sans être connecté
@@ -75,9 +78,18 @@ Route::middleware('auth')->group(function () {
         Route::put('/profile', [ParentController::class, 'updateProfile'])->name('profile.update');
         Route::get('/verification', [ParentController::class, 'parentVerification'])->name('verification');
         Route::get('/children/{id}', [ParentController::class, 'showChildren'])->name('showChildren');
-        Route::get('/student/{id}', [ParentController::class, 'showStudentProfile'])->name('student.profile');
+        Route::get('/student/{id}', [ParentController::class, 'showStudentProfile'])->name('child.details');
         Route::get('/student-registration', [StudentController::class, 'studentRegistration'])->name('student-registration');
-        //
+        Route::post('/student-registration-process', [StudentController::class, 'studentRegistrationProcess'])->name('studentRegistrationProcess');
+        Route::get('/student/{id}/{year_id}', [StudentController::class, 'academicDetails'])->name('child.academic-year-details');
+        Route::get('/payment-form', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
+    
+        // API pour récupérer les élèves d'un parent
+        Route::get('/api/students/{parentId}', [PaymentController::class, 'getStudentsForPayment'])->name('api.students');
+        
+        // Traitement du paiement
+        Route::post('/payment', [PaymentController::class, 'storePayment'])->name('payment.store');
+
     });
 
     Route::get("/verification/{id}", [UserController::class, "showVerificationForm"])->name("showVerificationForm");
@@ -146,13 +158,7 @@ Route::middleware('auth')->group(function () {
     })->name('examinations.create');
 
     // Gestion des paiements - principalement pour les comptables et admins
-    Route::get('/payments', function() {
-        return view('payments.index');
-    })->name('payments.index');
-
-    Route::get('/payments/create', function() {
-        return view('payments.create');
-    })->name('payments.create');
+    Route::resource('/payments', PaymentController::class);
 
     // Gestion des bulletins
     Route::get('/reports', function() {

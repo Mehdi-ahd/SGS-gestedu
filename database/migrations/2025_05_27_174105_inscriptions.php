@@ -20,8 +20,16 @@ return new class extends Migration
             $table->enum("status", [
                 "en attente",
                 "accepté",
-                "refusé"
+                "refusé",
+                "en cours",
+                "achevé",
             ])->default("en attente");
+            $table->integer("final_average")->nullable();
+            $table->enum("verdict", [
+                'passe',
+                'redouble',
+                'exclu',
+            ])->nullable();
             $table->foreign("school_year_id")->references("id")->on("school_years");
             $table->foreign("group_id")->references("id")->on("groups");
             $table->timestamps();

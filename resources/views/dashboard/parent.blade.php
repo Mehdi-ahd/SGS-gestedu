@@ -1,4 +1,3 @@
-
 @extends('layouts.parent')
 
 @section('title', 'Tableau de bord')
@@ -107,7 +106,7 @@
                                     <div class="card border-left-primary h-100">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center mb-3">
-                                                <img src="https://randomuser.me/api/portraits/kids/{{ $loop->index + 1 }}.jpg" 
+                                                <img src="https://randomuser.me/api/portraits/kids/{{ $child->getFullName() }}.jpg" 
                                                     alt="{{ $child->getFullName() }}" 
                                                     class="rounded-circle me-3" 
                                                     style="width: 50px; height: 50px; object-fit: cover;">
@@ -122,7 +121,7 @@
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         Niveau
                                                     </div>
-                                                    <div class="small font-weight-bold text-gray-800">{{ $child->studyLevel->name ?? 'N/A' }}</div>
+                                                    <div class="small font-weight-bold text-gray-800">{{ $child->currentInscription(date("Y") . "-" . date("Y")+1)->study_level->specification ?? 'N/A' }}</div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -140,7 +139,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-child fa-3x text-muted mb-3"></i>
                             <p class="text-muted">Aucun enfant enregistré</p>
-                            <a href="#" class="btn btn-primary">Inscrire un enfant</a>
+                            <a href="{{ route("parent.student-registration")}}" class="btn btn-primary">Inscrire un enfant</a>
                         </div>
                     @endif
                 </div>

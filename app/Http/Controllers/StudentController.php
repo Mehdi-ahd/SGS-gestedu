@@ -10,6 +10,8 @@ use App\Models\StudyLevel;
 use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
@@ -82,10 +84,12 @@ class StudentController extends Controller
             'birthday' => $request->input("{$type}_birthday"),
             'sex' => $type === 'father' ? 'M' : 'F',
             'phone' => $request->input("{$type}_phone"),
+            'password' => Hash::make('azerty'),
             'email' => $request->input("{$type}_email"),
             'home_address' => $request->input("{$type}_home_address"),
             'job' => $request->input("{$type}_job"),
             'work_address' => $request->input("{$type}_work_address"),
+            "role_id" => 'supervisor'
         ];
 
         // Si un superviseur avec cet email existe, retourne null pour ne pas recréer
@@ -193,9 +197,10 @@ class StudentController extends Controller
     {
         $student = Student::with('inscriptions.study_level', 'documents')->find($id);
         $student_documents = $student->documents()->get();
-        //dd($student);
+        //dd($student_documents->where("document_type", "Photo d'identité")->first()->document_path);
         $img = $student_documents->where("document_type", "Photo identité")->first();
         $cursus = $student->inscriptions;
+        //dd($img->document_path);
         $father = $student->getFather();
         $mother = $student->getMother();
         return view('students.show', [
@@ -340,19 +345,117 @@ class StudentController extends Controller
     }
 
     public function studentRegistration() {
+        $user = User::find(Auth::user()->id);
+        $firstChild = $user->students()->first();
         $study_levels = StudyLevel::all();
-        $fathers = User::where([
-            "sex" => "M",
-            "role_id" => "parent"
-        ])->get();
-        $mothers = User::where([
-            "sex" => "F",
-            "role_id" => "parent"
-        ])->get();
+        if($firstChild) {
+            $otherParent = $firstChild->supervisors()->where("supervisor_student.supervisor_id", "!=", $user->id)->get();
+            $fathers = $firstChild->supervisors()->where("supervisor_student.supervisor_id", "!=", $user->id)->where("sex", "M")->get();
+            $mothers = $firstChild->supervisors()->where("supervisor_student.supervisor_id", "!=", $user->id)->where("sex", "F")->get();
+        } else {
+            $fathers = [];
+            $mothers = [];
+        }
         return view('children.student-registration', [
             "study_levels" => $study_levels,
             "fathers" => $fathers,
             "mothers" => $mothers
+        ]);
+    }
+
+    public function studentRegistrationProcess(Request $request) {
+        // Validation des données de l'étudiant
+        $validated = $request->validate([
+            'lastname' => 'required|string|max:30',
+            'firstname' => 'required|string|max:30',
+            'birthday' => 'required|date',
+            'sex' => 'required|in:M,F',
+            'email' => 'required|email|max:100|unique:students,email',
+            'phone' => 'nullable|string|max:12',
+            'home_address' => 'nullable|string|max:30',
+            'registration_date' => 'required|date',
+        ]);
+
+        // Création de l'étudiant
+        $student = Student::create($validated);
+        $student_id = $student->id;
+
+        // Gestion de l'upload des fichiers si fournie
+        $files = [
+            "Photo d'identité" =>$request->file('photo') ,
+            "Certificat de naissance" =>$request->file('birth_certificate'),
+            "Certificat scolaire" =>$request->file('school_certificate'),
+            "Bulletin précédent" =>$request->file('previous_report') 
+        ];
+        
+        foreach($files as $type => $file) {
+            $filePath = $file->store("students/" . $student->id , "public");
+            StudentDocument::create([
+                "document_type" => $type,
+                "document_path" => $filePath,
+                "student_id" => $student->id
+            ]);
+        }
+        
+        $school_year = SchoolYear::find($request->input("school_year_id"));
+        if(!$school_year) {
+            $school_year = SchoolYear::create([
+                "id" => $request->input("school_year_id")
+            ]);
+        }
+
+        // Gestion du père
+        if ($request->has('toggle_father_existing') && $request->filled('father_id')) {
+            // Utilisation d'un père existant
+            $student->supervisors()->attach($request->input('father_id'), ['link' => 'father']);
+        } elseif ($request->filled('father_firstname') && $request->filled('father_lastname')) {
+            // Création d'un nouveau père
+            $fatherData = $this->validateSupervisorData($request, 'father');
+            if ($fatherData === null) {
+                $father = User::where('email', $request->input('father_email'))->first();
+            } else {
+                $father = User::create($fatherData);
+            }
+            $student->supervisors()->attach($father->id, ['link' => 'father']);
+        } else {
+            $student->supervisors()->attach(Auth::user()->id, ['link' => 'father']);
+        }
+
+        // Gestion de la mère
+        if ($request->has('toggle_mother_existing') && $request->filled('mother_id')) {
+            // Utilisation d'une mère existante
+            $student->supervisors()->attach($request->input('mother_id'), ['link' => 'mother']);
+        } elseif ($request->filled('mother_firstname') && $request->filled('mother_lastname')) {
+            // Création d'une nouvelle mère
+            $motherData = $this->validateSupervisorData($request, 'mother');
+            if ($motherData === null) {
+                $mother = User::where('email', $request->input('mother_email'))->first();
+            } else {
+                $mother = User::create($motherData);
+            }
+            $student->supervisors()->attach($mother->id, ['link' => 'mother']);
+        } else {
+            $student->supervisors()->attach(Auth::user()->id, ['link' => 'mother']);
+        }
+
+        Inscription::create([
+            "student_id" => $student_id,
+            "group_id" => $request->input("group_id") ?? "A",
+            "study_level_id" => $request->input("study_level_id"),
+            "school_year_id" => $school_year->id,
+        ]);
+
+        return redirect()->route("parent.showChildren") ->with('success', 'Étudiant ajouté avec succès!');
+    }
+
+    public function academicDetails($id, $year_id){
+        $child = Student::find($id);
+        $inscription = Inscription::where("school_year_id", $year_id)->where("student_id", $id)->first();
+        //dd($inscription);
+        return view("children.child-academic-year",[
+            "child" => $child,
+            "year" => $year_id,
+            "inscription" => $inscription
         ]);
     }
 }
