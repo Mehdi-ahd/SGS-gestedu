@@ -286,23 +286,28 @@
     <div class="structure-nav">
         <ul class="nav nav-pills">
             <li class="nav-item">
-                <a class="nav-link active" href="{{ route("school-structure.study-level.index")}}" onclick="setActiveTab(this)">
+                <a class="nav-link active" href="{{ route("school-structure.study-level.index")}}">
                     <i class="fas fa-graduation-cap me-2"></i>Niveaux d'études
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route("school-structure.subjects.index")}}" onclick="setActiveTab(this)">
+                <a class="nav-link" href="{{ route("school-structure.subjects.index")}}">
                     <i class="fas fa-book me-2"></i>Matières et coefficients
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route("school-structure.classrooms.index")}}" onclick="setActiveTab(this)">
+                <a class="nav-link " href="{{ route("school-structure.classrooms.index")}}">
                     <i class="fas fa-door-open me-2"></i>Salles de classe
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="setActiveTab(this)">
-                    <i class="fas fa-door-open me-2"></i>Frais de scolarité
+                <a class="nav-link" href="{{ route("school-structure.tuitions.index")}}">
+                    <i class="fas fa-money-bill-wave me-2"></i>Frais scolaires
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route("school-structure.teachings.index")}}">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Enseignements
                 </a>
             </li>
         </ul>
@@ -370,7 +375,6 @@
 
     <!-- Study Levels List -->
     <div class="row">
-        <!-- Sixième -->
         @forelse ($studyLevels as $studyLevel)
             <div class="col-12">
                 <div class="level-card" data-level-id="{{ $studyLevel->id }}">
@@ -385,9 +389,12 @@
                         <h6><i class="fas fa-users me-1"></i>Groupes disponibles:</h6>
                         <div class="groups-container">
                             @forelse ($studyLevel->groups as $group)
+                                @php
+                                    $total = $inscriptions->where("study_level_id", $studyLevel->id)->where("group_id", $group->id);
+                                @endphp
                                 <div class="group-item">
                                     <span class="group-name">{{ $group->id }}</span>
-                                    <span class="group-students">({{ $group->inscriptions->count() }} élèves)</span>
+                                    <span class="group-students">({{ $total->count() }} élèves)</span>
                                 </div>
                             @empty
                                 <div class="alert alert-info">Aucun groupe pour l'instant</div>

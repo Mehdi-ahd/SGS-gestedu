@@ -590,8 +590,8 @@
                     
 
                     <!-- Nav Item - Schedules -->
-                    <li class="nav-item {{ request()->is('schedules*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('schedules.index') }}">
+                    <li class="nav-item {{ request()->is('school-structure/schedules') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('school-structure.schedules.index') }}">
                             <i class="fas fa-fw fa-calendar-alt"></i>
                             <span>Emplois du temps</span>
                         </a>

@@ -1,5 +1,4 @@
 <?php
-// app/Models/Tuition.php
 
 namespace App\Models;
 
@@ -12,17 +11,18 @@ class Tuition extends Model
     use HasFactory;
 
     protected $fillable = [
-        "study_level_id",
-        "year_session_id",
-        "motif",
-        "type",
-        "amount",
-        "bond",
-        "due_date",
+        'study_level_id',
+        'year_session_id',
+        'motif',
+        'type',
+        'amount',
+        'bond',
+        'due_date'
     ];
 
     protected $casts = [
-        "due_date" => "date",
+        'due_date' => 'date',
+        'amount' => 'integer'
     ];
 
     public function studyLevel(): BelongsTo

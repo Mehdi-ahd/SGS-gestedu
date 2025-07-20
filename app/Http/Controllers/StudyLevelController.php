@@ -65,7 +65,6 @@ class StudyLevelController extends Controller
         }
 
         try {
-            DB::beginTransaction();
 
             // Créer le niveau d'étude
             $studyLevel = StudyLevel::create([
@@ -89,8 +88,6 @@ class StudyLevelController extends Controller
                 ];
             }
 
-            DB::commit();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Niveau d\'étude créé avec succès',
@@ -103,7 +100,6 @@ class StudyLevelController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la création du niveau d\'étude'
@@ -190,8 +186,7 @@ class StudyLevelController extends Controller
         }
 
         try {
-            DB::beginTransaction();
-
+           
             // Mettre à jour les informations de base
             $studyLevel->update([
                 'study_category_id' => $inputData['study_category_id'],
@@ -232,8 +227,6 @@ class StudyLevelController extends Controller
                 }
             }
 
-            DB::commit();
-
             // Recharger le niveau avec ses groupes
             $studyLevel = StudyLevel::with(['groups.inscriptions'])->find($id);
             
@@ -272,8 +265,6 @@ class StudyLevelController extends Controller
     {
         try {
             $studyLevel = StudyLevel::findOrFail($id);
-            
-            DB::beginTransaction();
 
             // Vérifier s'il y a des inscriptions dans les groupes de ce niveau
             $totalInscriptions = 0;
@@ -301,15 +292,12 @@ class StudyLevelController extends Controller
             // Supprimer le niveau d'étude
             $studyLevel->delete();
 
-            DB::commit();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Niveau d\'étude supprimé avec succès'
             ]);
 
         } catch (\Exception $e) {
-            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la suppression du niveau d\'étude'

@@ -1,5 +1,4 @@
 <?php
-// app/Models/Schedule.php
 
 namespace App\Models;
 
@@ -15,7 +14,7 @@ class Schedule extends Model
         'teaching_id',
         'week_day',
         'started_hour',
-        'ended_hour',
+        'ended_hour'
     ];
 
     protected $casts = [
@@ -28,12 +27,23 @@ class Schedule extends Model
         return $this->belongsTo(Teaching::class);
     }
 
-    
-    /**
-     * Obtenir l'enseignant associé à ce créneau horaire.
-     */
-    public function teacher(): BelongsTo
+    // Méthodes utilitaires
+    public function getTimeSlot()
     {
-        return $this->belongsTo(User::class);
+        return $this->started_hour->format('H:i') . '-' . $this->ended_hour->format('H:i');
+    }
+
+    public function getDayName()
+    {
+        $days = [
+            'monday' => 'Lundi',
+            'tuesday' => 'Mardi',
+            'wednesday' => 'Mercredi',
+            'thursday' => 'Jeudi',
+            'friday' => 'Vendredi',
+            'saturday' => 'Samedi'
+        ];
+
+        return $days[$this->week_day] ?? $this->week_day;
     }
 }

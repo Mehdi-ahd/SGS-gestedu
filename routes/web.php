@@ -9,8 +9,11 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudyLevelController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeachingController;
+use App\Http\Controllers\TuitionController;
 use App\Http\Controllers\UserController;
 use App\Models\Classroom;
 use App\Models\Role;
@@ -98,26 +101,41 @@ Route::middleware('auth')->group(function () {
     Route::get("/account-confirmation/{id}", [UserController::class, "accountConfirmationShow"])->name("accountConfirmationShow");
 
 
+    Route::prefix('school-structure/')->name("school-structure.")->group(function() {
+        //Gestion des matieres
+        Route::resource("subjects", SubjectController::class)->names("subjects");
+        // Route pour récupérer les niveaux d'une matière
+        Route::get('subjects/{subject}/levels', [SubjectController::class, 'getSubjectLevels'])->name('subjects.levels');
+        // Route pour supprimer un niveau d'une matière
+        Route::delete('subjects/{subject}/levels/{level}', [SubjectController::class, 'removeSubjectLevel'])->name('subjects.remove-level');
+        // Route pour mettre à jour le coefficient
+        Route::put('subjects/{subject}/levels/{level}/coefficient', [SubjectController::class, 'updateLevelCoefficient'])->name('subjects.update-coefficient');
 
-    //Gestion des matieres
-    Route::resource("school-structure/subjects", SubjectController::class)->names("school-structure.subjects");
-    // Route pour récupérer les niveaux d'une matière
-    Route::get('school-structure/subjects/{subject}/levels', [SubjectController::class, 'getSubjectLevels'])->name('school-structure.subjects.levels');
-    // Route pour supprimer un niveau d'une matière
-    Route::delete('school-structure/subjects/{subject}/levels/{level}', [SubjectController::class, 'removeSubjectLevel'])->name('school-structure.subjects.remove-level');
-    // Route pour mettre à jour le coefficient
-    Route::put('school-structure/subjects/{subject}/levels/{level}/coefficient', [SubjectController::class, 'updateLevelCoefficient'])->name('school-structure.subjects.update-coefficient');
+        //Gestions des niveaux d'etudes
+        Route::resource("study-level", StudyLevelController::class)->names("study-level");
 
-    //Gestions des niveaux d'etudes
-    Route::resource("school-structure/study-level", StudyLevelController::class)->names("school-structure.study-level");
+        // Route pour récupérer les groupes d'un niveau d'étude
+        Route::get('school-structure/classrooms/groups', [ClassroomController::class, 'getGroups'])->name('classrooms.groups');
+        //Gestion des salles de classes
+        Route::resource("classrooms", ClassroomController::class)->names("classrooms");
+        // Routes pour l'assignation des groupes aux salles
+        Route::post('classrooms/{classroom}/assign', [ClassroomController::class, 'assignGroup'])->name('classrooms.assign');
+        Route::post('classrooms/{classroom}/unassign', [ClassroomController::class, 'unassignGroup'])->name('classrooms.unassign');
 
-    // Route pour récupérer les groupes d'un niveau d'étude (doit être avant la route resource)
-    Route::get('school-structure/classrooms/groups', [ClassroomController::class, 'getGroups'])->name('school-structure.classrooms.groups');
-    //Gestion des salles de classes
-    Route::resource("school-structure/classrooms", ClassroomController::class)->names("school-structure.classrooms");
-    // Routes pour l'assignation des groupes aux salles
-    Route::post('school-structure/classrooms/{classroom}/assign', [ClassroomController::class, 'assignGroup'])->name('school-structure.classrooms.assign');
-    Route::post('school-structure/classrooms/{classroom}/unassign', [ClassroomController::class, 'unassignGroup'])->name('school-structure.classrooms.unassign');
+        //Routes pour la gestion des frais de scolarité et autres frais
+        Route::resource('tuitions', TuitionController::class)->names('tuitions');
+
+        // Route pour récupérer les groupes d'un niveau d'étude pour les enseignements
+        Route::get('teachings/groups', [TeachingController::class, 'getGroups'])->name('teachings.groups');
+        Route::resource('/teachings', TeachingController::class)->names('teachings');
+        
+        Route::get('schedules/groups', [ScheduleController::class, 'getGroups'])->name('schedules.groups');
+        Route::get('schedules/data', [ScheduleController::class, 'getData'])->name('schedules.getData');
+        Route::post('schedules/check-teaching', [ScheduleController::class, 'checkTeaching']);
+        // Routes pour les emplois du temps
+        Route::resource('schedules', ScheduleController::class)->names('schedules');
+    });
+    
 
     // Gestion des enseignants
     Route::resource('teachers', TeacherController::class);
@@ -144,9 +162,10 @@ Route::middleware('auth')->group(function () {
     })->name('attendance.store');
 
     // Emploi du temps
-    Route::get('/schedules', function() {
-        return view("schedules.index");
-    })->name('schedules.index');
+    // Route::get('/schedules', function() {
+    //     return view("schedules.index");
+    // })->name('schedules.index');
+    //Route::post('schedules', [ScheduleController::class, 'store']);
 
     // Gestion des examens
     Route::get('/examinations', function() {

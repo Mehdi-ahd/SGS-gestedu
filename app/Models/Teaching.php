@@ -13,10 +13,11 @@ class Teaching extends Model
 {
     use HasFactory;
 
-    protected $table = 'teaching';
+    protected $table = 'teachings';
 
     protected $fillable = [
         'study_level_id',
+        'group_id',
         'subject_id',
         'school_year_id',
         'teacher_id'
@@ -29,6 +30,11 @@ class Teaching extends Model
     public function studyLevel(): BelongsTo
     {
         return $this->belongsTo(StudyLevel::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
     }
 
     public function subject(): BelongsTo

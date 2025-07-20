@@ -245,8 +245,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="setActiveTab(this)">
-                    <i class="fas fa-door-open me-2"></i>Frais de scolarité
+                <a class="nav-link" href="{{ route("school-structure.tuitions.index")}}">
+                    <i class="fas fa-money-bill-wave me-2"></i>Frais scolaires
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route("school-structure.teachings.index")}}">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Enseignements
                 </a>
             </li>
         </ul>
