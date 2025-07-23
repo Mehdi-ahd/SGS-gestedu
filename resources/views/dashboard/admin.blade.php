@@ -354,7 +354,7 @@
                             <div class="card border-left-warning h-100 py-2">
                                 <div class="card-body text-center">
                                     <div class="mb-2"><i class="fas fa-calendar-alt fa-3x text-warning"></i></div>
-                                    <a href="{{ route('schedules.index') }}" class="stretched-link text-decoration-none">
+                                    <a href="{{ route('school-structure.schedules.index') }}" class="stretched-link text-decoration-none">
                                         <h5 class="mb-0 font-weight-bold text-gray-800">Emplois du temps</h5>
                                     </a>
                                 </div>

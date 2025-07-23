@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
     });
 
-    Route::get("/verification/{id}", [UserController::class, "showVerificationForm"])->name("showVerificationForm");
+    //Route::get("/verification/{id}", [UserController::class, "showVerificationForm"])->name("showVerificationForm");
     Route::post('/verification', [UserController::class, 'storeVerification'])->name('storeVerification');
     Route::get("/account-confirmation", [UserController::class, "accountConfirmationIndex"])->name("accountConfirmationIndex");
     Route::get("/account-confirmation/{id}", [UserController::class, "accountConfirmationShow"])->name("accountConfirmationShow");

@@ -162,7 +162,7 @@
                             <i class="fas fa-credit-card text-success me-3"></i>
                             <span>Mes paiements</span>
                         </a>
-                        <a href="{{ route('schedules.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="fas fa-calendar-alt text-info me-3"></i>
                             <span>Emplois du temps</span>
                         </a>

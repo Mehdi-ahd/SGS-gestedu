@@ -371,21 +371,21 @@
 <body>
     <!-- Verification Alert (only if user needs verification) -->
     @if(Auth::check() && Auth::user()->status === "en attente de soumission")
-    <div class="alert alert-verification alert-dismissible fade show" role="alert">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <span class="flex-grow-1">
-                    <strong>Vérification d'identité requise :</strong> 
-                    Veuillez compléter votre vérification d'identité pour accéder à tous nos services.
-                </span>
-                <a href="{{ route('parent.verification') }}" class="btn btn-sm btn-warning ms-3">
-                    Vérifier maintenant
-                </a>
-                <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-verification alert-dismissible fade show" role="alert">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span class="flex-grow-1">
+                        <strong>Vérification d'identité requise :</strong> 
+                        Veuillez compléter votre vérification d'identité pour accéder à tous nos services.
+                    </span>
+                    <a href="{{ route('parent.verification') }}" class="btn btn-sm btn-warning ms-3">
+                        Vérifier maintenant
+                    </a>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
         </div>
-    </div>
     @endif
 
     <!-- Navbar -->
