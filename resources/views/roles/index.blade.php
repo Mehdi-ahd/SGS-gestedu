@@ -208,6 +208,9 @@
               </div>
               <div class="ms-md-auto py-2 py-md-0">
                 <a href="#" class="btn btn-label-info btn-round me-2">Exporter</a>
+                <button class="btn btn-success btn-round me-2" data-bs-toggle="modal" data-bs-target="#createPermissionModal">
+                  <i class="fas fa-key me-2"></i>Créer une Permission
+                </button>
                 <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#createRoleModal">
                   <i class="fas fa-plus me-2"></i>Créer un Rôle
                 </button>
@@ -358,6 +361,53 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">
                       <i class="fas fa-save me-2"></i>Créer le Rôle
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Create Permission -->
+        <div class="modal fade" id="createPermissionModal" tabindex="-1" aria-labelledby="createPermissionModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="createPermissionModalLabel">
+                  <i class="fas fa-key me-2"></i>Créer une Nouvelle Permission
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="createPermissionForm" method="POST" action="">
+                    @csrf
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="permissionName" name="name" placeholder="Nom de la permission" required>
+                    <label for="permissionName">Nom de la Permission *</label>
+                  </div>
+
+                  <div class="form-floating mb-3">
+                    <textarea class="form-control" id="permissionDescription" name="description" style="height: 100px" placeholder="Description de la permission"></textarea>
+                    <label for="permissionDescription">Description</label>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Assigner par défaut aux rôles</label>
+                    @foreach ($roles as $role)
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="roles[]" id="role{{ $role->id }}" value="{{ $role->id }}">
+                      <label class="form-check-label" for="role{{ $role->id }}">
+                        {{ $role->name }}
+                      </label>
+                    </div>
+                    @endforeach
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                      <i class="fas fa-save me-2"></i>Créer la Permission
                     </button>
                   </div>
                 </form>

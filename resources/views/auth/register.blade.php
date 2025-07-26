@@ -255,6 +255,8 @@
                                 </span>
                             </div>
                             
+                            <input type="hidden" class="form-control" name="token" value="{{$token}}">
+                            
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="form-check-input" id="agree" name="agree" required>

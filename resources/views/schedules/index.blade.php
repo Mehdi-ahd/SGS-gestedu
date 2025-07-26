@@ -1,3 +1,4 @@
+
 @extends("layouts.app")
 
 @section("title", "Emplois du temps")
@@ -421,7 +422,7 @@ async function loadCreateGroups() {
     }
 
     try {
-        const response = await fetch(`schedules/groups?study_level_id=${levelSelect.value}`, {
+        const response = await fetch(`/school-structure/schedules/groups?study_level_id=${levelSelect.value}`, {
             headers: {
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
@@ -463,7 +464,7 @@ async function checkTeaching() {
     }
 
     try {
-        const response = await fetch('schedules/check-teaching', {
+        const response = await fetch('/school-structure/schedules/check-teaching', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

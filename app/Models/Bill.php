@@ -25,7 +25,7 @@ class Bill extends Model
         'paid_at' => 'datetime',
     ];
 
-    public function inscriptions(): BelongsTo
+    public function inscription(): BelongsTo
     {
         return $this->belongsTo(Inscription::class);
     }

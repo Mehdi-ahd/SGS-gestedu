@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -208,6 +209,16 @@ class UserController extends Controller
                 ]);
             }
 
+            // Mettre à jour le statut de l'utilisateur
+            $user->status = 'en attente de vérification';
+            $user->save();
+
+            // Envoyer un email aux administrateurs
+            $admins = User::where('role_id', 'admin')->get();
+            foreach ($admins as $admin) {
+                Mail::to($admin->email)->send(new \App\Mail\IdentityVerificationCompleted($user));
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Demande de vérification soumise avec succès',
@@ -242,5 +253,55 @@ class UserController extends Controller
         return view("users.accountShow", [
             "user" => $user,
         ]);
+    }
+
+    /**
+     * Valider un compte utilisateur
+     */
+    public function validateAccount($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $user->status = 'actif';
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Compte validé avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la validation : ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Rejeter un compte utilisateur
+     */
+    public function rejectAccount(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $user->status = 'rejeté';
+            $user->rejection_reason = $request->input('reason', 'Documents non conformes');
+            $user->save();
+
+            // Supprimer les documents associés
+            $user->documents()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Compte rejeté avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du rejet : ' . $e->getMessage()
+            ]);
+        }
     }
 }

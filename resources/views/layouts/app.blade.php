@@ -599,22 +599,22 @@
 
                     <!-- Teachers and Admin -->
                     @if(Auth::check() && in_array(Auth::user()->role_id, ["admin", "teacher"]))
-                    <!-- Nav Item - Examinations -->
-                    <li class="nav-item {{ request()->is('examinations*') ? 'active' : '' }}">
-                        <a class="nav-link {{ request()->is('examinations*') ? '' : 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseExams" aria-expanded="{{ request()->is('examinations*') ? 'true' : 'false' }}" aria-controls="collapseExams">
-                            <i class="fas fa-fw fa-file-alt"></i>
-                            <span>Évaluations</span>
-                        </a>
-                        <div id="collapseExams" class="collapse {{ request()->is('examinations*') ? 'show' : '' }}">
-                            <div class="collapse-inner rounded">
-                                <ul>
-                                    <li><a class="collapse-item" href="{{ route('examinations.create') }}">Créer une évaluation</a></li>
-                                    <li><a class="collapse-item" href="#">Saisir les notes</a></li>
-                                    <li><a class="collapse-item" href="#">Bulletins scolaires</a></li>
-                                </ul>
+                        <!-- Nav Item - Examinations -->
+                        <li class="nav-item {{ request()->is('examinations*') ? 'active' : '' }}">
+                            <a class="nav-link {{ request()->is('examinations*') ? '' : 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseExams" aria-expanded="{{ request()->is('examinations*') ? 'true' : 'false' }}" aria-controls="collapseExams">
+                                <i class="fas fa-fw fa-file-alt"></i>
+                                <span>Évaluations</span>
+                            </a>
+                            <div id="collapseExams" class="collapse {{ request()->is('examinations*') ? 'show' : '' }}">
+                                <div class="collapse-inner rounded">
+                                    <ul>
+                                        <li><a class="collapse-item" href="{{ route('examinations.create') }}">Créer une évaluation</a></li>
+                                        <li><a class="collapse-item" href="#">Saisir les notes</a></li>
+                                        <li><a class="collapse-item" href="#">Bulletins scolaires</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    </li>
+                        </li>
                     @endif
 
                     <!-- Accountant and Admin -->
@@ -688,6 +688,23 @@
                             </div>
                         </div>
                     </li>
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
+                                <i class="fas fa-users"></i>
+                                <span>Gestion des utilisateurs</span>
+                            </a>
+                            <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-bs-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Utilisateurs:</h6>
+                                    <a class="collapse-item" href="<?= route('index') ?>">Liste des utilisateurs</a>
+                                    <a class="collapse-item" href="<?= route('accountConfirmationIndex') ?>">Validation des comptes</a>
+                                    <a class="collapse-item" href="<?= route('admin.invitation-tokens') ?>">Invitations</a>
+                                    <a class="collapse-item" href="<?= route('parents.index') ?>">Parents</a>
+                                    <a class="collapse-item" href="<?= route('teachers.index') ?>">Professeurs</a>
+                                    <a class="collapse-item" href="<?= route('students.index') ?>">Élèves</a>
+                                </div>
+                            </div>
+                        </li>
                     @endif
 
                     <!-- Divider -->

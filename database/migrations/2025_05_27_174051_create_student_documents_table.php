@@ -11,12 +11,7 @@ return new class extends Migration
     {
         Schema::create('student_documents', function (Blueprint $table) {
             $table->id();
-            $table->enum('document_type', [
-                "Photo d\'identité",
-                'Certificat de naissance', 
-                'Certificat scolaire', 
-                "Bulletin précédent",
-            ]);
+            $table->string('document_type', 191);
             $table->string('document_path', 100);
             $table->foreignId('student_id')->constrained('students');
             $table->timestamps();

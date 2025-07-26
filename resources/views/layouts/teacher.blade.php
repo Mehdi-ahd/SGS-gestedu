@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="GestEdu - Espace Parent">
+    <meta name="description" content="GestEdu - Espace Professeur">
     <meta name="author" content="GestEdu">
     @yield("header_elements")
-    <title>@yield('title') | GestEdu - Espace Parent</title>
+    <title>@yield('title') | GestEdu - Espace Professeur</title>
 
     <!-- Favicons -->
     <link rel="icon" href="{{ asset('img/gestedu-logo.svg') }}" sizes="any">
@@ -25,7 +24,7 @@
     <!-- Custom styles -->
     <style>
         :root {
-            --primary-color: #28a745;
+            --primary-color: #fd7e14;
             --secondary-color: #6c757d;
             --success-color: #28a745;
             --danger-color: #dc3545;
@@ -45,7 +44,7 @@
         }
 
         /* Navbar */
-        .navbar-parent {
+        .navbar-teacher {
             position: fixed;
             top: 0;
             left: 0;
@@ -57,7 +56,7 @@
             padding: 0;
         }
 
-        .navbar-parent .navbar-brand {
+        .navbar-teacher .navbar-brand {
             display: flex;
             align-items: center;
             padding: 0 1rem;
@@ -67,11 +66,11 @@
             text-decoration: none;
         }
 
-        .navbar-parent .navbar-brand:hover {
+        .navbar-teacher .navbar-brand:hover {
             color: var(--primary-color);
         }
 
-        .navbar-parent .navbar-brand img {
+        .navbar-teacher .navbar-brand img {
             height: 35px;
             margin-right: 0.5rem;
         }
@@ -87,7 +86,7 @@
             }
         }
 
-        .navbar-parent .navbar-nav .nav-link {
+        .navbar-teacher .navbar-nav .nav-link {
             color: var(--dark-color);
             padding: 0 0.75rem;
             height: var(--navbar-height);
@@ -95,11 +94,11 @@
             align-items: center;
         }
 
-        .navbar-parent .navbar-nav .nav-link:hover {
+        .navbar-teacher .navbar-nav .nav-link:hover {
             color: var(--primary-color);
         }
 
-        .navbar-parent .dropdown-menu {
+        .navbar-teacher .dropdown-menu {
             border: none;
             box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .15);
         }
@@ -136,7 +135,7 @@
         /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, var(--primary-color) 0%, #1e7e34 100%);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #e8590c 100%);
             color: #fff;
             box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
             position: fixed;
@@ -300,8 +299,8 @@
         }
 
         .btn-primary:hover {
-            background-color: #1e7e34;
-            border-color: #1e7e34;
+            background-color: #e8590c;
+            border-color: #e8590c;
         }
 
         .btn-outline-primary {
@@ -312,24 +311,6 @@
         .btn-outline-primary:hover {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
-        }
-
-        /* Alert for verification */
-        .alert-verification {
-            background-color: #fff3cd;
-            border-color: #ffeaa7;
-            color: #856404;
-            margin: 0;
-            border-radius: 0;
-            position: fixed;
-            top: var(--navbar-height);
-            left: 0;
-            right: 0;
-            z-index: 1040;
-        }
-
-        .layout-container.has-alert {
-            padding-top: calc(var(--navbar-height) + 60px);
         }
 
         /* Overlay for mobile */
@@ -369,30 +350,11 @@
     @yield('styles')
 </head>
 <body>
-    <!-- Verification Alert (only if user needs verification) -->
-    @if(Auth::check() && Auth::user()->status === "en attente de soumission")
-        <div class="alert alert-verification alert-dismissible fade show" role="alert">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <span class="flex-grow-1">
-                        <strong>Vérification d'identité requise :</strong> 
-                        Veuillez compléter votre vérification d'identité pour accéder à tous nos services.
-                    </span>
-                    <a href="{{ route('parent.verification') }}" class="btn btn-sm btn-warning ms-3">
-                        Vérifier maintenant
-                    </a>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-    @endif
-
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-parent">
+    <nav class="navbar navbar-expand-lg navbar-teacher">
         <div class="container-fluid">
             <!-- Logo -->
-            <a class="navbar-brand" href="{{ route('parent.dashboard') }}">
+            <a class="navbar-brand" href="{{ route('teacher.dashboard') }}">
                 <img src="{{ asset('img/gestedu-logo.svg') }}" alt="Logo">
                 GestEdu
             </a>
@@ -418,12 +380,12 @@
                 <div class="nav-item dropdown me-2">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-bell"></i>
-                        <span class="badge bg-danger badge-sm">3</span>
+                        <span class="badge bg-danger badge-sm">2</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header">Notifications</h6></li>
-                        <li><a class="dropdown-item" href="#">Nouvelle note pour Thomas</a></li>
-                        <li><a class="dropdown-item" href="#">Réunion parents-professeurs</a></li>
+                        <li><a class="dropdown-item" href="#">Nouveau message administratif</a></li>
+                        <li><a class="dropdown-item" href="#">Emploi du temps modifié</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#">Voir toutes</a></li>
                     </ul>
@@ -432,12 +394,12 @@
                 <!-- User menu -->
                 <div class="nav-item dropdown">
                     <a class="nav-link d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=28a745&color=ffffff" alt="Profile" class="rounded-circle me-2" style="width: 32px; height: 32px;">
-                        <span class="d-none d-lg-inline text-dark">{{ Auth::user()->getFullName() }}</span>
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=fd7e14&color=ffffff" alt="Profile" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                        <span class="d-none d-lg-inline">{{ Auth::user()->getFullName() }}</span>
                         <i class="fas fa-chevron-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('parent.profile') }}">
+                        <li><a class="dropdown-item" href="{{ route('teacher.profile') }}">
                             <i class="fas fa-user me-2"></i>Mon profil
                         </a></li>
                         <li><a class="dropdown-item" href="#">
@@ -462,21 +424,21 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Layout Container -->
-    <div class="layout-container {{ Auth::check() && Auth::user()->status === 'en attente de soumission' ? 'has-alert' : '' }}">
+    <div class="layout-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-content">
                 <!-- User Profile Section (visible on mobile) -->
                 <div class="sidebar-user-profile">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=28a745&color=ffffff" alt="Profile">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getFullName()) }}&background=fd7e14&color=ffffff" alt="Profile">
                     <div class="user-name">{{ Auth::user()->getFullName() }}</div>
-                    <div class="user-role">Parent</div>
+                    <div class="user-role">Professeur</div>
                 </div>
 
                 <ul class="navbar-nav">
                     <!-- Dashboard -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.dashboard') ? 'active' : '' }}" href="{{ route('parent.dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}" href="{{ route('teacher.dashboard') }}">
                             <i class="fas fa-home"></i>
                             <span>Tableau de bord</span>
                         </a>
@@ -486,43 +448,17 @@
 
                     <!-- Profile -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.profile') ? 'active' : '' }}" href="{{ route('parent.profile') }}">
+                        <a class="nav-link {{ request()->routeIs('teacher.profile') ? 'active' : '' }}" href="{{ route('teacher.profile') }}">
                             <i class="fas fa-user"></i>
                             <span>Mon profil</span>
                         </a>
                     </li>
 
-                    <!-- Children -->
+                    <!-- My Classes -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.children*') ? 'active' : '' }}" href="{{ route('parent.showChildren', Auth::user()->id) }}">
-                            <i class="fas fa-child"></i>
-                            <span>Mes enfants</span>
-                        </a>
-                    </li>
-
-                    <!-- Student Registration -->
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.student-registration') ? 'active' : '' }}" href="{{ route('parent.student-registration') }}">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Inscrire un enfant</span>
-                        </a>
-                    </li>
-
-                    <!-- Verification -->
-                    @if(Auth::user()->status === 'en attente de soumission')
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('parent.verification') ? 'active' : '' }}" href="{{ route('parent.verification') }}">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>Vérification</span>
-                            </a>
-                        </li>
-                    @endif
-
-                    <!-- Payments -->
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('parent.payment.form') ? 'active' : '' }}" href="{{ route('parent.payments.index')}}">
-                            <i class="fas fa-credit-card"></i>
-                            <span>Paiements</span>
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Mes classes</span>
                         </a>
                     </li>
 
@@ -530,7 +466,23 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-calendar-alt"></i>
-                            <span>Emplois du temps</span>
+                            <span>Emploi du temps</span>
+                        </a>
+                    </li>
+
+                    <!-- Grades -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-star"></i>
+                            <span>Notes</span>
+                        </a>
+                    </li>
+
+                    <!-- Attendance -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-check"></i>
+                            <span>Présences</span>
                         </a>
                     </li>
 
@@ -548,7 +500,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-file-alt"></i>
-                            <span>Bulletins</span>
+                            <span>Rapports</span>
                         </a>
                     </li>
 

@@ -370,7 +370,7 @@ class StudentController extends Controller
             'firstname' => 'required|string|max:30',
             'birthday' => 'required|date',
             'sex' => 'required|in:M,F',
-            'email' => 'required|email|max:100|unique:students,email',
+            'email' => 'nullable|email|max:100|unique:students,email',
             'phone' => 'nullable|string|max:12',
             'home_address' => 'nullable|string|max:30',
             'registration_date' => 'required|date',
@@ -389,12 +389,15 @@ class StudentController extends Controller
         ];
         
         foreach($files as $type => $file) {
-            $filePath = $file->store("students/" . $student->id , "public");
-            StudentDocument::create([
-                "document_type" => $type,
-                "document_path" => $filePath,
-                "student_id" => $student->id
-            ]);
+            if($file) {
+                $filePath = $file->store("students/" . $student->id , "public");
+                StudentDocument::create([
+                    "document_type" => $type,
+                    "document_path" => $filePath,
+                    "student_id" => $student->id
+                ]);
+            }
+            
         }
         
         $school_year = SchoolYear::find($request->input("school_year_id"));
@@ -445,7 +448,7 @@ class StudentController extends Controller
             "school_year_id" => $school_year->id,
         ]);
 
-        return redirect()->route("parent.showChildren") ->with('success', 'Étudiant ajouté avec succès!');
+        return redirect()->route("parent.showChildren", Auth::user()->id) ->with('success', 'Étudiant ajouté avec succès!');
     }
 
     public function academicDetails($id, $year_id){
