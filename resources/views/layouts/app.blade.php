@@ -663,41 +663,40 @@
 
                     <!-- Admin Only -->
                     @if(Auth::check() && Auth::user()->isAdmin() )
-                    <hr class="sidebar-divider">
+                        <hr class="sidebar-divider">
 
-                    <!-- Heading -->
-                    <div class="sidebar-heading">
-                        Administration
-                    </div>
-
-                    <!-- Nav Item - Settings -->
-                    <li class="nav-item {{ request()->is('roles*', 'users*') ? 'active' : '' }}">
-                        <a class="nav-link {{ request()->is('examinations*', 'users*', 'school-structure*') ? '' : ' collapsed ' }} " href="#" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
-                            <i class="fas fa-fw fa-cog"></i>
-                            <span>Paramètres</span>
-                        </a>
-                        <div id="collapseSettings" class="collapse {{ request()->is('roles*', 'users*', 'account-confirmation*', 'school-structure*') ? 'show' : '' }}">
-                            <div class="collapse-inner rounded">
-                                <ul>
-                                    <li><a class="collapse-item" href="#">Général</a></li>
-                                    <li><a class="collapse-item {{ request()->is('account-confirmation*') ? 'active' : '' }} " href="{{ route("accountConfirmationIndex") }}">Confirmation des comptes</a></li>
-                                    <li><a class="collapse-item {{ request()->is('school-structure*') ? 'active' : '' }} " href="{{ route("school-structure.study-level.index")}}">Structure scolaire</a></li>
-                                    <li><a class="collapse-item {{ request()->is('roles*') ? 'active' : '' }} " href="{{ route("roles.index") }}">Rôles et permissions</a></li>
-                                    <li><a class="collapse-item" href="#">Sauvegarde</a></li>
-                                </ul>
-                            </div>
+                        <!-- Heading -->
+                        <div class="sidebar-heading">
+                            Administration
                         </div>
-                    </li>
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
+
+                        <!-- Nav Item - Settings -->
+                        <li class="nav-item {{ request()->is('roles*', 'users*') ? 'active' : '' }}">
+                            <a class="nav-link {{ request()->is('examinations*', 'users*', 'school-structure*') ? '' : ' collapsed ' }} " href="#" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
+                                <i class="fas fa-fw fa-cog"></i>
+                                <span>Paramètres</span>
+                            </a>
+                            <div id="collapseSettings" class="collapse {{ request()->is('roles*', 'users*', 'school-structure*') ? 'show' : '' }}">
+                                <div class="collapse-inner rounded">
+                                    <ul>
+                                        <li><a class="collapse-item" href="#">Général</a></li>
+                                        {{-- <li><a class="collapse-item {{ request()->is('account-confirmation*') ? 'active' : '' }} " href="{{ route("accountConfirmationIndex") }}">Confirmation des comptes</a></li> --}}
+                                        <li><a class="collapse-item {{ request()->is('school-structure*') ? 'active' : '' }} " href="{{ route("school-structure.study-level.index")}}">Structure scolaire</a></li>
+                                        <li><a class="collapse-item {{ request()->is('roles*') ? 'active' : '' }} " href="{{ route("roles.index") }}">Rôles et permissions</a></li>
+                                        <li><a class="collapse-item" href="#">Sauvegarde</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item {{ request()->is('account-confirmation*') ? 'active' : '' }}">
+                            <a class="nav-link {{ request()->is('account-confirmation*') ? '' : ' collapsed ' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
                                 <i class="fas fa-users"></i>
                                 <span>Gestion des utilisateurs</span>
                             </a>
-                            <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-bs-parent="#accordionSidebar">
+                            <div id="collapseUsers" class="collapse {{ request()->is('account-confirmation*') ? 'show' : '' }}" aria-labelledby="headingUsers" data-bs-parent="#accordionSidebar">
                                 <div class="bg-white py-2 collapse-inner rounded">
-                                    <h6 class="collapse-header">Utilisateurs:</h6>
                                     <a class="collapse-item" href="<?= route('index') ?>">Liste des utilisateurs</a>
-                                    <a class="collapse-item" href="<?= route('accountConfirmationIndex') ?>">Validation des comptes</a>
+                                    <a class="collapse-item {{ request()->is('account-confirmation*') ? 'active' : '' }}" href="<?= route('accountConfirmationIndex') ?>">Validation des comptes</a>
                                     <a class="collapse-item" href="<?= route('admin.invitation-tokens') ?>">Invitations</a>
                                     <a class="collapse-item" href="<?= route('parents.index') ?>">Parents</a>
                                     <a class="collapse-item" href="<?= route('teachers.index') ?>">Professeurs</a>

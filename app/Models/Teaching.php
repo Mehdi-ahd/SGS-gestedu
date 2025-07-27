@@ -26,6 +26,11 @@ class Teaching extends Model
     // protected $keyType = 'string';
     // public $incrementing = false;
 
+    public function students(): HasMany
+    {
+        return $this->hasMany(Inscription::class, 'study_level_id', 'study_level_id')->where('group_id', $this->group_id);
+    }
+
 
     public function studyLevel(): BelongsTo
     {
@@ -60,5 +65,13 @@ class Teaching extends Model
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(Inscription::class, "attendance_list")->withPivot(["day", "observation"])->withTimestamps();
+    }
+
+    public static function countStudentsForTeacher($teacherId)
+    {
+        return self::withCount('inscriptions')
+                ->where('teacher_id', $teacherId)
+                ->get()
+                ->sum('inscriptions_count');
     }
 }

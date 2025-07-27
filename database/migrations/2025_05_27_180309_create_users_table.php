@@ -29,7 +29,8 @@ return new class extends Migration
             $table->enum("status", [
                 "en attente de soumission",
                 "verifié",
-                "en attente de vérification"
+                "en attente de vérification",
+                "rejeté"
             ])->default("en attente de soumission");
             $table->string("role_id", 30);
             $table->foreign("role_id")->references("id")->on("roles");

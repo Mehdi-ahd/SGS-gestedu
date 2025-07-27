@@ -235,7 +235,7 @@ class UserController extends Controller
 
     public function accountConfirmationIndex() 
     {
-        $users = User::paginate(10);
+        $users = User::where("role_id", "supervisor")->paginate(10);
         $usersInawait = $users->where("status", "en attente de soumission")->count();
         $usersInawaitConfirm = $users->where("status", "en attente de vérification")->count();
         $usersConfirm = $users->where("status", "verifié")->count();
@@ -258,50 +258,27 @@ class UserController extends Controller
     /**
      * Valider un compte utilisateur
      */
-    public function validateAccount($id)
+    public function validateAccount(Request $request)
     {
-        try {
-            $user = User::findOrFail($id);
+        $id = $request->input("user_id");
+        $user = User::findOrFail($id);
 
-            $user->status = 'actif';
-            $user->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Compte validé avec succès'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la validation : ' . $e->getMessage()
-            ]);
-        }
+        $user->status = 'verifié';
+        $user->save();
+        return redirect()->route("accountConfirmationIndex");
     }
 
     /**
      * Rejeter un compte utilisateur
      */
-    public function rejectAccount(Request $request, $id)
+    public function rejectAccount(Request $request)
     {
-        try {
-            $user = User::findOrFail($id);
+        $id = $request->input("user_id");
+        $user = User::findOrFail($id);
 
-            $user->status = 'rejeté';
-            $user->rejection_reason = $request->input('reason', 'Documents non conformes');
-            $user->save();
-
-            // Supprimer les documents associés
-            $user->documents()->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Compte rejeté avec succès'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors du rejet : ' . $e->getMessage()
-            ]);
-        }
+        $user->status = 'rejeté';
+        //$user->rejection_reason = $request->input('reason', 'Documents non conformes');
+        $user->save();
+        return redirect()->route("accountConfirmationIndex");
     }
 }

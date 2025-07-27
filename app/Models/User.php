@@ -91,7 +91,7 @@ class User extends Authenticatable
 
     public function teachings(): HasMany
     {
-        return $this->hasMany(Teaching::class);
+        return $this->hasMany(Teaching::class, "teacher_id", 'id');
     }
  
 

@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
 
         // Autres routes avec middleware de vérification d'identité
         Route::middleware('parent.identity.verification')->group(function () {
-            Route::get('/dashboard', [DashboardController::class, 'parent'])->name('dashboard');
+            Route::get('/', [DashboardController::class, 'parent'])->name('dashboard');
             Route::get('/profile', [ParentController::class, 'parentProfile'])->name('profile');
             Route::put('/profile', [ParentController::class, 'updateProfile'])->name('profile.update');
             Route::get('/children/{id}', [ParentController::class, 'showChildren'])->name('showChildren');
@@ -104,12 +104,8 @@ Route::middleware('auth')->group(function () {
 
     // Routes spécifiques au dashboard professeur
     Route::prefix('teacher')->name('teacher.')->group(function () {
-        Route::get('/dashboard', function() {
-            return view('teacher.dashboard');
-        })->name('dashboard');
-        Route::get('/profile', function() {
-            return view('teacher.profile');
-        })->name('profile');
+        Route::get('/', [DashboardController::class, 'teacher'])->name('dashboard');
+        Route::get('/profile', [TeacherController::class, 'profile'])->name('profile');
     });
 
     // Routes d'administration pour les tokens d'invitation
@@ -122,6 +118,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/verification', [UserController::class, 'storeVerification'])->name('storeVerification');
     Route::get("/account-confirmation", [UserController::class, "accountConfirmationIndex"])->name("accountConfirmationIndex");
     Route::get("/account-confirmation/{id}", [UserController::class, "accountConfirmationShow"])->name("accountConfirmationShow");
+    Route::post("/account-confirmation/validate", [UserController::class, "validateAccount"])->name("validateAccount");
+    Route::post("/account-confirmation/reject", [UserController::class, "rejectAccount"])->name("rejectAccount");
 
 
     Route::prefix('school-structure/')->name("school-structure.")->group(function() {
@@ -226,8 +224,8 @@ Route::middleware('auth')->group(function () {
     Route::resource("roles", RoleController::class);
     Route::get('users/edit/{id}', [UserController::class, "editPermission"])->name("users.editPermission");
     Route::post("/users/updatePermission", [UserController::class, "UpdatePermissions"])->name("users.updatePermission");
-    Route::post("/users/{id}/validate", [UserController::class, "validateAccount"])->name("users.validate");
-    Route::post("/users/{id}/reject", [UserController::class, "rejectAccount"])->name("users.reject");
+    // Route::post("/users/{id}/validate", [UserController::class, "validateAccount"])->name("users.validate");
+    // Route::post("/users/{id}/reject", [UserController::class, "rejectAccount"])->name("users.reject");
     Route::get('roles/edit/{id}', [RoleController::class, "editPermission"])->name("roles.editPermission");
     Route::post("/roles/updatePermission", [RoleController::class, "UpdatePermissions"])->name("roles.updatePermission");
 

@@ -38,6 +38,11 @@ class Inscription extends Model
         return $this->belongsTo(SchoolYear::class);
     }
 
+    public function getStudyInformation()
+    {
+        return "{$this->study_level->specification} {$this->group->id}";
+    }
+
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(Teaching::class, "attendance_list")->withPivot(["day", "observation"])->withTimestamps();

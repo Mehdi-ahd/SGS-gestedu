@@ -654,7 +654,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/dashboard">Tableau de bord</a></li>
                 <li class="breadcrumb-item"><a href="account-confirmation-index.html">Confirmation des comptes</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Martin Dubois</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $user->getFullName() }}</li>
             </ol>
         </nav>
     </div>
@@ -738,96 +738,104 @@
 
     <!-- Documents Section -->
     <div class="info-card">
-        <h5><i class="fas fa-folder me-2"></i>Documents fournis</h5>
-        <div class="documents-grid">
-            <!-- Document 1 - Image CNI -->
-            <div class="document-card">
-                <div class="document-icon">
-                    <i class="fas fa-id-card"></i>
-                </div>
-                <div class="document-title">Carte d'identité</div>
-                <div class="document-preview">
-                    <img src="{{ Storage::url($user->documents->first()->document_path) }}" alt="Carte d'identité recto">
-                </div>
-                <div class="document-actions">
-                    <button class="doc-btn doc-btn-view" onclick="viewDocument('cni-recto')">
-                        <i class="fas fa-eye me-1"></i>Voir
-                    </button>
-                    <a href="#" class="doc-btn doc-btn-download">
-                        <i class="fas fa-download me-1"></i>Télécharger
-                    </a>
-                </div>
-            </div>
-
-            <!-- Document 2 - PDF -->
-            <div class="document-card">
-                <div class="document-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div class="document-title">Justificatif de domicile</div>
-                <div class="document-preview">
-                    <iframe src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" type="application/pdf"></iframe>
-                </div>
-                <div class="document-actions">
-                    <button class="doc-btn doc-btn-view" onclick="viewDocument('justificatif-domicile')">
-                        <i class="fas fa-eye me-1"></i>Voir
-                    </button>
-                    <a href="#" class="doc-btn doc-btn-download">
-                        <i class="fas fa-download me-1"></i>Télécharger
-                    </a>
-                </div>
-            </div>
-
-            <!-- Document 3 - Image photo -->
-            <div class="document-card">
-                <div class="document-icon">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <div class="document-title">Photo d'identité</div>
-                <div class="document-preview">
-                    <img src="https://via.placeholder.com/150x180/1cc88a/ffffff?text=PHOTO+ID" alt="Photo d'identité">
-                </div>
-                <div class="document-actions">
-                    <button class="doc-btn doc-btn-view" onclick="viewDocument('photo-identite')">
-                        <i class="fas fa-eye me-1"></i>Voir
-                    </button>
-                    <a href="#" class="doc-btn doc-btn-download">
-                        <i class="fas fa-download me-1"></i>Télécharger
-                    </a>
-                </div>
-            </div>
-
-            <!-- Document 4 - PDF Contrat de travail -->
-            <div class="document-card">
-                <div class="document-icon">
-                    <i class="fas fa-file-contract"></i>
-                </div>
-                <div class="document-title">Contrat de travail</div>
-                <div class="document-preview">
-                    <div class="text-center">
-                        <i class="fas fa-file-pdf fa-3x text-muted"></i>
-                        <br><small class="text-muted">Fichier PDF</small>
+        @if($user->status !== "en attente de soumission")
+            <h5><i class="fas fa-folder me-2"></i>Documents fournis</h5>
+            <div class="documents-grid">
+                <!-- Document 1 - Image CNI -->
+                <div class="document-card">
+                    <div class="document-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="document-title">Carte d'identité</div>
+                    <div class="document-preview">
+                        <img src="{{ ($user->documents->where("type", ["CIP", "Passeport"])->first()) ? Storage::url($user->documents->where("type", ["CIP", "Passeport"])->first()->document_path) : "Indisponible"}}" alt="Carte d'identité recto">
+                    </div>
+                    <div class="document-actions">
+                        <button class="doc-btn doc-btn-view" onclick="viewDocument('cni-recto')">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </button>
+                        <a href="#" class="doc-btn doc-btn-download">
+                            <i class="fas fa-download me-1"></i>Télécharger
+                        </a>
                     </div>
                 </div>
-                <div class="document-actions">
-                    <button class="doc-btn doc-btn-view" onclick="viewDocument('contrat-travail')">
-                        <i class="fas fa-eye me-1"></i>Voir
-                    </button>
-                    <a href="#" class="doc-btn doc-btn-download">
-                        <i class="fas fa-download me-1"></i>Télécharger
-                    </a>
+
+                <!-- Document 2 - PDF -->
+                <div class="document-card">
+                    <div class="document-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="document-title">Justificatif de domicile</div>
+                    <div class="document-preview">
+                        <iframe src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" type="application/pdf"></iframe>
+                    </div>
+                    <div class="document-actions">
+                        <button class="doc-btn doc-btn-view" onclick="viewDocument('justificatif-domicile')">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </button>
+                        <a href="#" class="doc-btn doc-btn-download">
+                            <i class="fas fa-download me-1"></i>Télécharger
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Document 3 - Image photo -->
+                <div class="document-card">
+                    <div class="document-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="document-title">Photo d'identité</div>
+                    <div class="document-preview">
+                        <img src="https://via.placeholder.com/150x180/1cc88a/ffffff?text=PHOTO+ID" alt="Photo d'identité">
+                    </div>
+                    <div class="document-actions">
+                        <button class="doc-btn doc-btn-view" onclick="viewDocument('photo-identite')">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </button>
+                        <a href="#" class="doc-btn doc-btn-download">
+                            <i class="fas fa-download me-1"></i>Télécharger
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Document 4 - PDF Contrat de travail -->
+                <div class="document-card">
+                    <div class="document-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="document-title">Contrat de travail</div>
+                    <div class="document-preview">
+                        <div class="text-center">
+                            <i class="fas fa-file-pdf fa-3x text-muted"></i>
+                            <br><small class="text-muted">Fichier PDF</small>
+                        </div>
+                    </div>
+                    <div class="document-actions">
+                        <button class="doc-btn doc-btn-view" onclick="viewDocument('contrat-travail')">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </button>
+                        <a href="#" class="doc-btn doc-btn-download">
+                            <i class="fas fa-download me-1"></i>Télécharger
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        @else
+            Aucun document soumis pour l'instant
+        @endif
     </div>
 
     <!-- Action Section -->
     <div class="action-section">
         <h4><i class="fas fa-gavel me-2"></i>Actions de validation</h4>
         <div class="action-buttons">
-            <button class="action-btn btn-approve" onclick="approveAccount()">
-                <i class="fas fa-check me-2"></i>Valider le compte
-            </button>
+            <form action="{{ route("validateAccount")}}" method="post">
+                @csrf
+                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                <button class="action-btn btn-approve">
+                    <i class="fas fa-check me-2"></i>Valider le compte
+                </button>
+            </form>
             <button class="action-btn btn-reject" onclick="toggleRejectForm()">
                 <i class="fas fa-times me-2"></i>Rejeter le compte
             </button>
@@ -838,10 +846,12 @@
 
         <!-- Reject Form -->
         <div id="rejectForm" class="reject-form">
-            <h6 class="text-dark mb-3">Motif de rejet</h6>
-            <form method="POST" action="">
+            <h6 class="text-dark mb-3">Motif de rejet(optionnel)</h6>
+            <form method="POST" action="{{ route("rejectAccount")}}">
+                @csrf
                 <div class="mb-3">
-                    <textarea class="form-control" name="rejection_reason" rows="4" placeholder="Veuillez préciser la raison du rejet du compte..." required></textarea>
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                    <textarea class="form-control" name="rejection_reason" rows="4" placeholder="Veuillez préciser la raison du rejet du compte..."></textarea>
                 </div>
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-danger">
@@ -929,7 +939,7 @@
         switch(docType) {
             case 'cni-recto':
                 modalTitle.textContent = 'Carte d\'identité - Recto';
-                modalBody.innerHTML = '<img src="{{Storage::url($user->documents->first()->document_path)}}" class="img-fluid" alt="CNI Recto">';
+                modalBody.innerHTML = '<img src="{{ ($user->documents->where("type", ["CIP", "Passeport"])->first()) ? Storage::url($user->documents->where("type", ["CIP", "Passeport"])->first()->document_path) : ""}}" class="img-fluid" alt="CNI Recto">';
                 break;
             case 'justificatif-domicile':
                 modalTitle.textContent = 'Justificatif de domicile';

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inscription;
+use App\Models\StudyLevel;
 use App\Models\Supervisor;
 use App\Models\SupervisorDocument;
+use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +56,9 @@ class DashboardController extends Controller
         
         return view('dashboard.admin', [
             "user" => Auth::user(),
+            "inscriptions" => Inscription::all(),
+            "teachers" => User::where("role_id", "teacher")->get(),
+            "study_levels" => StudyLevel::all(),
         ]);
     }
     

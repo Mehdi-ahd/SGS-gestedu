@@ -100,39 +100,42 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    @if(Auth::user()->teachings()->count() > 0)
+                    @php
+                        $teachings = Auth::user()->teachings()->with(['studyLevel', 'group', 'subject'])->take(4)->get();
+                    @endphp
+                    @if($teachings->count() > 0)
                         <div class="row">
-                            @foreach(Auth::user()->teachings()->with(['studyLevel', 'group', 'subject'])->take(4) as $teaching)
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-left-primary h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="me-3">
-                                                <i class="fas fa-book fa-2x text-primary"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="card-title mb-1">{{ $teaching->subject->name ?? 'N/A' }}</h6>
-                                                <span class="badge bg-primary">{{ $teaching->studyLevel->name ?? 'N/A' }} - {{ $teaching->group->name ?? 'N/A' }}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row text-center">
-                                            <div class="col-6">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    Niveau
+                            @foreach($teachings as $teaching)
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-left-primary h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">
+                                                    <i class="fas fa-book fa-2x text-primary"></i>
                                                 </div>
-                                                <div class="small font-weight-bold text-gray-800">{{ $teaching->studyLevel->name ?? 'N/A' }}</div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    Groupe
+                                                <div>
+                                                    <h6 class="card-title mb-1">{{ $teaching->subject->name ?? 'N/A' }}</h6>
+                                                    <span class="badge bg-primary">{{ $teaching->studyLevel->specification ?? 'N/A' }} - {{ $teaching->group->id ?? 'N/A' }}</span>
                                                 </div>
-                                                <div class="small font-weight-bold text-success">{{ $teaching->group->name ?? 'N/A' }}</div>
+                                            </div>
+                                            
+                                            <div class="row text-center">
+                                                <div class="col-6">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        Niveau
+                                                    </div>
+                                                    <div class="small font-weight-bold text-gray-800">{{ $teaching->studyLevel->specification ?? 'N/A' }}</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        Groupe
+                                                    </div>
+                                                    <div class="small font-weight-bold text-success">{{ $teaching->group->id ?? 'N/A' }}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             @endforeach
                         </div>
                     @else

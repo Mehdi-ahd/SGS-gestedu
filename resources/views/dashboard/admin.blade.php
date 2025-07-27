@@ -19,10 +19,13 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
+                        @php
+                            $active_inscriptions = $inscriptions->where("status", "accepté");
+                        @endphp
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Élèves inscrits</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">1,285</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $active_inscriptions->count() }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
@@ -40,7 +43,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Enseignants</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">68</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $teachers->count() }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
@@ -58,7 +61,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Classes</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $study_levels->count() }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-school fa-2x text-gray-300"></i>
@@ -203,36 +206,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Martin Lucas</td>
-                                    <td>4ème C</td>
-                                    <td>12/05/2023</td>
-                                    <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <td>Dubois Emma</td>
-                                    <td>6ème A</td>
-                                    <td>10/05/2023</td>
-                                    <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <td>Petit Hugo</td>
-                                    <td>2nde B</td>
-                                    <td>08/05/2023</td>
-                                    <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <td>Bernard Thomas</td>
-                                    <td>5ème D</td>
-                                    <td>05/05/2023</td>
-                                    <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <td>Robert Léa</td>
-                                    <td>1ère S</td>
-                                    <td>03/05/2023</td>
-                                    <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
-                                </tr>
+                                @foreach ($inscriptions->take(5) as $inscription)
+                                    <tr>
+                                        <td>{{ $inscription->student->getFullName() }}</td>
+                                        <td>{{ $inscription->getStudyInformation() }}</td>
+                                        <td>{{ $inscription->created_at }}</td>
+                                        <td><a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

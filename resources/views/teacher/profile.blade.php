@@ -1,4 +1,3 @@
-
 @extends('layouts.teacher')
 
 @section('title', 'Mon profil')
@@ -95,10 +94,10 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="badge bg-primary">{{ $teaching->studyLevel->name ?? 'N/A' }}</span>
+                                            <span class="badge bg-primary">{{ $teaching->studyLevel->specification ?? 'N/A' }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-success">{{ $teaching->group->name ?? 'N/A' }}</span>
+                                            <span class="badge bg-success">{{ $teaching->group->id ?? 'N/A' }}</span>
                                         </td>
                                         <td>
                                             <span class="badge bg-info">{{ $teaching->students()->count() ?? 0 }} élèves</span>

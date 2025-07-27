@@ -154,4 +154,8 @@ class TeacherController extends Controller
             "studyLevels" => $studyLevels
         ]);
     }
+
+    public function profile() {
+        return view("teacher.profile");
+    }
 }
