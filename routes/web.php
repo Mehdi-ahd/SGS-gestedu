@@ -36,6 +36,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name("index");
 
+Route::get('/frais-scolaires', function () {
+    return view('tuitions');
+})->name('tuitions');
+
 Route::get("/rol", function() {
     $roles = [
         "admin" => "Administrateur",
