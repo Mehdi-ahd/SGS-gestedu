@@ -24,7 +24,7 @@
             <p>Un nouvel utilisateur vient de s'enregistrer sur la plateforme :</p>
             
             <div class="user-info">
-                <p><strong>Nom :</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
+                <p><strong>Nom :</strong> {{ $user->getFullName() }}</p>
                 <p><strong>Email :</strong> {{ $user->email }}</p>
                 <p><strong>Rôle :</strong> {{ $user->role->name ?? 'N/A' }}</p>
                 <p><strong>Date d'inscription :</strong> {{ $user->created_at->format('d/m/Y à H:i') }}</p>
