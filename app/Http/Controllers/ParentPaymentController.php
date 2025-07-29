@@ -7,6 +7,7 @@ use App\Models\YearSession;
 use App\Models\Tuition;
 use App\Models\Bill;
 use App\Models\StudyLevel;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -240,13 +241,15 @@ class ParentPaymentController extends Controller
             if ($transactionData['status'] === 'SUCCESS') {
                 // Enregistrer le paiement dans la base de données
                 $data = json_decode($transactionData['data'], true);
+
+                $user = User::find(Auth::user()->id);
                 
                 $bill = Bill::create([
                     'inscription_id' => $data['inscription_id'],
                     'amount_paid' => $transactionData['amount'],
                     'payment_method' => 'kkiapay',
                     'transaction_id' => $transactionId,
-                    'paid_by' => Auth::user()->getFullName(),
+                    'paid_by' => $user->getFullName(),
                     'paid_with' => 'mobile_money',
                     'paid_at' => now()
                 ]);
