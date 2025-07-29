@@ -183,6 +183,8 @@ Route::middleware('auth')->group(function () {
     // Gestion des étudiants - CRUD complet avec StudentController
     Route::resource('students', StudentController::class);
 
+
+
     // Routes pour la réinscription des anciens élèves
     Route::get('/students/reenrollment/index', [StudentController::class, 'reenrollment'])->name('students.reenrollment');
     Route::post('/students/reenrollment/{id}', [StudentController::class, 'processReenrollment'])->name('students.processReenrollment');
@@ -243,7 +245,7 @@ Route::middleware('auth')->group(function () {
     Route::post("/roles/updatePermission", [RoleController::class, "UpdatePermissions"])->name("roles.updatePermission");
 
     // Routes pour les paiements - Administrateur
-    Route::prefix('admin/payments')->name('admin.payments.')->middleware(['role:admin'])->group(function () {
+    Route::prefix('admin/payments')->name('admin.payments.')->middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('/create', [PaymentController::class, 'create'])->name('create');
         Route::get('/data', [PaymentController::class, 'getPayments'])->name('data');
@@ -265,11 +267,24 @@ Route::middleware('auth')->group(function () {
     //     Route::get('/', [ParentPaymentController::class, 'index'])->name('index');
     //     Route::get('/history', [ParentPaymentController::class, 'history'])->name('history');
 
+    // Routes pour les paiements - Parent
+    // Route::prefix('parent/payments')->name('parent.payments.')->middleware(['auth','parent.identity.verification'])->group(function () {
+    //     Route::get('/', [ParentPaymentController::class, 'index'])->name('index');
+    //     Route::get('/history', [ParentPaymentController::class, 'history'])->name('history');
+    //     Route::get('/child-fees/{enrollment}', [ParentPaymentController::class, 'getChildFees'])->name('child-fees');
+    //     Route::post('/initialize', [ParentPaymentController::class, 'initializePayment'])->name('initialize');
+    //     Route::post('/callback', [ParentPaymentController::class, 'paymentCallback'])->name('callback');
+    // });
+
     Route::prefix('parent')->group(function () {
-    Route::get('/payments', [\App\Http\Controllers\ParentPaymentController::class, 'index'])->name('parent.payments.index');
-    Route::get('/payments/validated-inscriptions', [\App\Http\Controllers\ParentPaymentController::class, 'getValidatedInscriptions']);
-    Route::get('/payments/details/{inscription}', [\App\Http\Controllers\ParentPaymentController::class, 'getPaymentDetails']);
-    Route::get('/payments/history', [\App\Http\Controllers\ParentPaymentController::class, 'history'])->name('parent.payments.history');
-    Route::post('/payments/initiate', [\App\Http\Controllers\ParentPaymentController::class, 'initiatePayment']);
-});
+        Route::get('/payments', [\App\Http\Controllers\ParentPaymentController::class, 'index'])->name('parent.payments.index');
+        Route::get('/payments/validated-inscriptions', [\App\Http\Controllers\ParentPaymentController::class, 'getValidatedInscriptions']);
+        Route::get('/payments/details/{inscription}', [\App\Http\Controllers\ParentPaymentController::class, 'getPaymentDetails']);
+        Route::get('/payments/history', [\App\Http\Controllers\ParentPaymentController::class, 'history'])->name('parent.payments.history');
+        Route::post('/payments/initiate', [\App\Http\Controllers\ParentPaymentController::class, 'initiatePayment']);
+        Route::get('/payments/callback', [\App\Http\Controllers\ParentPaymentController::class, 'paymentCallback'])->name('parent.payments.callback');
+    });
+
+    // Route publique pour le webhook KKiaPay (sans middleware auth)
+    Route::post('/webhook/kkiapay', [\App\Http\Controllers\ParentPaymentController::class, 'paymentWebhook'])->name('webhook.kkiapay');
 });

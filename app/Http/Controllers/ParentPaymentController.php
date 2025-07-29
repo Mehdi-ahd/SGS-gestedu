@@ -239,20 +239,24 @@ class ParentPaymentController extends Controller
             $transactionData = $verification['data'];
 
             if ($transactionData['status'] === 'SUCCESS') {
-                // Enregistrer le paiement dans la base de données
-                $data = json_decode($transactionData['data'], true);
-
-                $user = User::find(Auth::user()->id);
+                // Vérifier si le paiement n'existe pas déjà
+                $existingBill = Bill::where('transaction_id', $transactionId)->first();
                 
-                $bill = Bill::create([
-                    'inscription_id' => $data['inscription_id'],
-                    'amount_paid' => $transactionData['amount'],
-                    'payment_method' => 'kkiapay',
-                    'transaction_id' => $transactionId,
-                    'paid_by' => $user->getFullName(),
-                    'paid_with' => 'mobile_money',
-                    'paid_at' => now()
-                ]);
+                if (!$existingBill) {
+                    $data = json_decode($transactionData['data'], true);
+
+                    $user = User::find(Auth::user()->id);
+                    
+                    $bill = Bill::create([
+                        'inscription_id' => $data['inscription_id'],
+                        'amount_paid' => $transactionData['amount'],
+                        'payment_method' => 'kkiapay',
+                        'transaction_id' => $transactionId,
+                        'paid_by' => $user->getFullName(),
+                        'paid_with' => $transactionData['type'] ?? 'mobile_money',
+                        'paid_at' => now()
+                    ]);
+                }
 
                 return redirect()->route('parent.payments.index')
                     ->with('success', 'Paiement effectué avec succès !');
@@ -262,6 +266,7 @@ class ParentPaymentController extends Controller
             }
 
         } catch (\Exception $e) {
+            Log::error('Payment callback error: ' . $e->getMessage());
             return redirect()->route('parent.payments.index')
                 ->with('error', 'Erreur lors du traitement du paiement');
         }

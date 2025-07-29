@@ -1,7 +1,10 @@
-
 @extends('layouts.parent')
 
 @section('title', 'Paiements')
+
+@section('header_elements')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 
 @section('styles')
 <style>
@@ -388,10 +391,110 @@ document.getElementById('proceed-payment').addEventListener('click', function() 
     }
 });
 
-function initiateKKiaPayPayment(paymentData) {
-    // Cette fonction sera implémentée lors de l'intégration KKiaPay
-    alert(`Redirection vers KKiaPay pour le paiement de ${new Intl.NumberFormat('fr-FR').format(paymentData.totalAmount)} FCFA`);
-    console.log('Données de paiement:', paymentData);
+async function initiateKKiaPayPayment(paymentData) {
+    try {
+        // Désactiver le bouton pendant le traitement
+        const payButton = document.getElementById('proceed-payment');
+        payButton.disabled = true;
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Initialisation...';
+
+        // Appeler l'API pour initier le paiement
+        const response = await fetch('/parent/payments/initiate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                inscription_id: paymentData.inscriptionId,
+                session_id: paymentData.sessionId,
+                amount: paymentData.totalAmount
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Ouvrir le widget KKiaPay
+            openKkiapayWidget(result.payment_url);
+        } else {
+            alert('Erreur: ' + result.message);
+            resetPayButton();
+        }
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'initiation du paiement');
+        resetPayButton();
+    }
+}
+
+function openKkiapayWidget(paymentUrl) {
+    // Ouvrir le widget KKiaPay dans une nouvelle fenêtre
+    const popup = window.open(
+        paymentUrl,
+        'kkiapay-payment',
+        'width=600,height=700,scrollbars=yes,resizable=yes'
+    );
+
+    // Écouter les messages du popup
+    window.addEventListener('message', function(event) {
+        if (event.origin !== 'https://widget.kkiapay.me' && event.origin !== 'https://widget-sandbox.kkiapay.me') {
+            return;
+        }
+
+        if (event.data.status) {
+            popup.close();
+            handlePaymentCallback(event.data);
+        }
+    });
+
+    // Vérifier si le popup est fermé manuellement
+    const checkClosed = setInterval(function() {
+        if (popup.closed) {
+            clearInterval(checkClosed);
+            resetPayButton();
+        }
+    }, 1000);
+}
+
+function handlePaymentCallback(data) {
+    if (data.status === 'SUCCESS') {
+        document.getElementById('payment-content').innerHTML = `
+            <div class="alert alert-success text-center">
+                <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                <h5>Paiement réussi !</h5>
+                <p>Votre paiement de ${new Intl.NumberFormat('fr-FR').format(data.amount)} FCFA a été traité avec succès.</p>
+                <p><strong>ID Transaction:</strong> ${data.transactionId}</p>
+            </div>
+        `;
+        document.getElementById('proceed-payment').style.display = 'none';
+        
+        // Recharger les données après 3 secondes
+        setTimeout(() => {
+            loadValidatedInscriptions();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+            modal.hide();
+        }, 3000);
+        
+    } else if (data.status === 'FAILED') {
+        document.getElementById('payment-content').innerHTML = `
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-times-circle fa-3x mb-3 text-danger"></i>
+                <h5>Paiement échoué</h5>
+                <p>Le paiement n'a pas pu être traité. Veuillez réessayer.</p>
+            </div>
+        `;
+        resetPayButton();
+    } else {
+        resetPayButton();
+    }
+}
+
+function resetPayButton() {
+    const payButton = document.getElementById('proceed-payment');
+    payButton.disabled = false;
+    payButton.innerHTML = '<i class="fas fa-lock me-1"></i>Procéder au paiement';
 }
 </script>
 @endsection
