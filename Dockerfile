@@ -34,8 +34,12 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Copier package.json et package-lock.json pour le cache Docker
 COPY package*.json ./
 
-# Installer les dépendances Node.js
-RUN npm ci --only=production
+# Installer les dépendances Node.js (dev inclus)
+RUN npm ci
+
+# Construire les assets et supprimer les devDependencies
+RUN npm run build && npm prune --production
+
 
 # Copier le reste des fichiers de l'application
 COPY . .
