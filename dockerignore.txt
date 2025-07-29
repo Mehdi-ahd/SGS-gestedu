@@ -1,0 +1,63 @@
+
+# Dépendances
+/node_modules
+/vendor
+
+# Fichiers de production Laravel
+.env
+.env.backup
+.env.production
+
+# Logs
+/storage/logs
+*.log
+
+# Cache
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/bootstrap/cache
+
+# Fichiers temporaires
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Tests
+.phpunit.result.cache
+/coverage
+
+# Assets de développement
+/public/hot
+/public/storage
+/storage/*.key
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+
+# Fichiers attachés
+attached_assets/
+diagrams/
+
+# Autres
+/tests
+.editorconfig
+.styleci.yml
+phpunit.xml
+vite.config.js
