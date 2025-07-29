@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InscriptionStatusChanged;
 use App\Models\Inscription;
 use App\Models\SchoolYear;
 use App\Models\Student;
@@ -12,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
@@ -460,5 +462,117 @@ class StudentController extends Controller
             "year" => $year_id,
             "inscription" => $inscription
         ]);
+    }
+
+    /**
+     * Afficher la page de gestion des inscriptions
+     */
+    public function inscriptionsIndex()
+    {
+        return view('students.inscriptions');
+    }
+
+    /**
+     * Obtenir les niveaux d'étude pour les filtres
+     */
+    public function getStudyLevels()
+    {
+        $studyLevels = \App\Models\StudyLevel::orderBy('specification')->get();
+        return response()->json($studyLevels);
+    }
+
+    /**
+     * Filtrer les inscriptions
+     */
+    public function filterInscriptions(Request $request)
+    {
+        $currentYear = date("Y") . "-" . (date("Y") + 1);
+        
+        $query = \App\Models\Inscription::with(['student', 'study_level'])
+            ->where('school_year_id', $currentYear);
+
+        // Filtrer par statut
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filtrer par niveau d'étude
+        if ($request->filled('study_level_id')) {
+            $query->where('study_level_id', $request->study_level_id);
+        }
+
+        // Filtrer par nom d'élève
+        if ($request->filled('student_name')) {
+            $searchTerm = $request->student_name;
+            $query->whereHas('student', function($q) use ($searchTerm) {
+                $q->where('firstname', 'like', "%{$searchTerm}%")
+                  ->orWhere('lastname', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $inscriptions = $query->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'success' => true,
+            'inscriptions' => $inscriptions
+        ]);
+    }
+
+    /**
+     * Mise à jour en lot des inscriptions
+     */
+    public function bulkUpdateInscriptions(Request $request)
+    {
+        $request->validate([
+            'inscriptions' => 'required|array',
+            'inscriptions.*' => 'exists:inscriptions,id',
+            'action' => 'required|in:validate,reject'
+        ]);
+
+        $inscriptionIds = $request->inscriptions;
+        $action = $request->action;
+        $newStatus = $action === 'validate' ? 'accepté' : 'refusé';
+
+        try {
+            $inscriptions = \App\Models\Inscription::with(['student.supervisors'])->whereIn('id', $inscriptionIds)->get();
+            
+            // Mettre à jour le statut des inscriptions
+            \App\Models\Inscription::whereIn('id', $inscriptionIds)->update(['status' => $newStatus]);
+
+            // Envoyer des emails aux parents
+            foreach ($inscriptions as $inscription) {
+                $this->notifyParentsOfStatusChange($inscription, $newStatus);
+            }
+
+            $message = $action === 'validate' 
+                ? count($inscriptionIds) . ' inscription(s) validée(s) avec succès'
+                : count($inscriptionIds) . ' inscription(s) rejetée(s) avec succès';
+
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour : ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Notifier les parents du changement de statut d'inscription
+     */
+    private function notifyParentsOfStatusChange($inscription, $newStatus)
+    {
+        $student = $inscription->student;
+        $parents = $student->supervisors;
+
+        foreach ($parents as $parent) {
+            Mail::to($parent->email)->send(
+                new InscriptionStatusChanged($inscription, $newStatus, $parent)
+            );
+        }
     }
 }

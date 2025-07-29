@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TeacherAssigned;
 use App\Models\Teaching;
 use App\Models\StudyLevel;
 use App\Models\Group;
@@ -9,6 +10,7 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Models\SchoolYear;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TeachingController extends Controller
 {
@@ -78,6 +80,14 @@ class TeachingController extends Controller
         $teaching = Teaching::create($validated);
         
         $teaching->load(['studyLevel', 'group', 'subject', 'teacher', 'schoolYear']);
+
+        // Envoyer un email au professeur assigné
+        $teacher = User::find($validated['teacher_id']);
+        if ($teacher) {
+            Mail::to($teacher->email)->send(
+                new TeacherAssigned($teaching, $teacher)
+            );
+        }
 
         return response()->json([
             'success' => true,

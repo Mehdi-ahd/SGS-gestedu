@@ -1,3 +1,4 @@
+
 @extends('layouts.parent')
 
 @section('title', 'Paiements')
@@ -11,6 +12,12 @@
         margin-bottom: 1.5rem;
         color: white;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .child-card:hover {
+        transform: translateY(-5px);
     }
 
     .child-header {
@@ -37,14 +44,14 @@
         font-size: 1.5rem;
     }
 
-    .fees-grid {
+    .child-details {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
 
-    .fee-card {
+    .detail-item {
         background: rgba(255,255,255,0.1);
         border-radius: 10px;
         padding: 1rem;
@@ -52,17 +59,75 @@
         border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .fee-amount {
-        font-size: 1.25rem;
+    .detail-label {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .total-amount {
+        font-size: 1.5rem;
         font-weight: bold;
         color: #FFD700;
+    }
+
+    .inscription-type {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        background: rgba(255,255,255,0.2);
+    }
+
+    .no-children {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+
+    .payment-modal .modal-content {
+        border-radius: 15px;
+    }
+
+    .payment-summary {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .tuition-item {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-left: 4px solid #667eea;
+    }
+
+    .tuition-amount {
+        font-weight: bold;
+        color: #28a745;
+    }
+
+    .session-header {
+        background: #667eea;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: bold;
     }
 
     .btn-pay {
         background: linear-gradient(45deg, #28a745, #20c997);
         border: none;
         border-radius: 25px;
-        padding: 0.5rem 1.5rem;
+        padding: 0.75rem 2rem;
         color: white;
         font-weight: 500;
         transition: transform 0.2s;
@@ -78,34 +143,6 @@
         cursor: not-allowed;
         transform: none;
     }
-
-    .no-children {
-        text-align: center;
-        padding: 3rem;
-        color: #6c757d;
-    }
-
-    .payment-status {
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    .status-paid {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-pending {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-available {
-        background: #cce5ff;
-        color: #004085;
-    }
 </style>
 @endsection
 
@@ -115,69 +152,42 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-credit-card me-2"></i>Paiements des frais scolaires
         </h1>
-        <a href="{{ route('parent.payments.history') }}" class="btn btn-outline-primary">
-            <i class="fas fa-history me-1"></i>Historique
-        </a>
+        <div>
+            <span class="badge bg-info me-2">Année scolaire: {{ date('Y') }}-{{ date('Y') + 1 }}</span>
+            <a href="{{ route('parent.payments.history') }}" class="btn btn-outline-primary">
+                <i class="fas fa-history me-1"></i>Historique
+            </a>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            @if($inscriptions->count() > 0)
-                @foreach($inscriptions as $inscription)
-                <div class="child-card">
-                    <div class="child-header">
-                        <div class="child-info">
-                            <div class="child-avatar">
-                                <i class="fas fa-user-graduate"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-1">{{ $inscription->student->firstname }} {{ $inscription->student->lastname }}</h4>
-                                <p class="mb-0 opacity-75">
-                                    {{ $inscription->study_level->specification }} - {{ $inscription->school_year_id }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="fees-grid" id="fees-{{ $inscription->id }}">
-                        <div class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            @else
-                <div class="no-children">
-                    <i class="fas fa-user-graduate fa-3x mb-3 text-muted"></i>
-                    <h5>Aucune inscription trouvée</h5>
-                    <p class="text-muted">Aucun enfant inscrit pour l'année scolaire en cours.</p>
-                </div>
-            @endif
+    <div class="row" id="childrenContainer">
+        <div class="col-12 text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal de paiement -->
-<div class="modal fade" id="paymentModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade payment-modal" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-credit-card me-2"></i>Confirmer le paiement
+                    <i class="fas fa-credit-card me-2"></i>Paiement des frais scolaires
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="payment-details">
-                    <!-- Les détails du paiement seront chargés ici -->
+                <div id="payment-content">
+                    <!-- Le contenu sera chargé ici -->
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-success" id="confirm-payment">
-                    <i class="fas fa-lock me-1"></i>Payer maintenant
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-pay" id="proceed-payment" style="display: none;">
+                    <i class="fas fa-lock me-1"></i>Procéder au paiement
                 </button>
             </div>
         </div>
@@ -188,53 +198,77 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Charger les frais pour chaque inscription
-    @foreach($inscriptions as $inscription)
-        loadFeesForInscription({{ $inscription->id }});
-    @endforeach
+    loadValidatedInscriptions();
 });
 
-async function loadFeesForInscription(inscriptionId) {
+async function loadValidatedInscriptions() {
     try {
-        const response = await fetch(`/parent/payments/fees/${inscriptionId}`);
+        const currentYear = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`;
+        const response = await fetch(`/parent/payments/validated-inscriptions?year=${currentYear}`);
         const data = await response.json();
 
         if (data.success) {
-            displayFees(inscriptionId, data.fees);
+            displayChildren(data.inscriptions);
         } else {
-            document.getElementById(`fees-${inscriptionId}`).innerHTML = 
-                '<div class="text-center text-danger">Erreur lors du chargement des frais</div>';
+            document.getElementById('childrenContainer').innerHTML = 
+                '<div class="col-12"><div class="no-children"><i class="fas fa-exclamation-circle fa-3x mb-3 text-muted"></i><h5>Erreur</h5><p class="text-muted">Impossible de charger les inscriptions validées.</p></div></div>';
         }
     } catch (error) {
         console.error('Erreur:', error);
-        document.getElementById(`fees-${inscriptionId}`).innerHTML = 
-            '<div class="text-center text-danger">Erreur lors du chargement des frais</div>';
+        document.getElementById('childrenContainer').innerHTML = 
+            '<div class="col-12"><div class="no-children"><i class="fas fa-exclamation-circle fa-3x mb-3 text-muted"></i><h5>Erreur</h5><p class="text-muted">Erreur lors du chargement des données.</p></div></div>';
     }
 }
 
-function displayFees(inscriptionId, fees) {
-    const container = document.getElementById(`fees-${inscriptionId}`);
+function displayChildren(inscriptions) {
+    const container = document.getElementById('childrenContainer');
 
-    if (fees.length === 0) {
-        container.innerHTML = '<div class="text-center opacity-75">Aucun frais à payer pour le moment</div>';
+    if (inscriptions.length === 0) {
+        container.innerHTML = 
+            '<div class="col-12"><div class="no-children"><i class="fas fa-user-graduate fa-3x mb-3 text-muted"></i><h5>Aucune inscription validée</h5><p class="text-muted">Aucune inscription validée pour l\'année scolaire en cours.</p></div></div>';
         return;
     }
 
     let html = '';
-    fees.forEach(fee => {
+    inscriptions.forEach(inscription => {
+        const isReinscription = inscription.student.has_previous_completed_inscription;
+        
         html += `
-            <div class="fee-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <h6 class="mb-1">${fee.motif}</h6>
-                        <small class="opacity-75">${fee.type}</small>
+            <div class="col-lg-6 col-xl-4 mb-4">
+                <div class="child-card" onclick="openPaymentModal(${inscription.id})">
+                    <div class="child-header">
+                        <div class="child-info">
+                            <div class="child-avatar">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-1">${inscription.student.firstname} ${inscription.student.lastname}</h4>
+                                <span class="inscription-type">
+                                    ${isReinscription ? 'Réinscription' : 'Inscription'}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <span class="payment-status status-available">Disponible</span>
+
+                    <div class="child-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Niveau d'étude</div>
+                            <div class="detail-value">${inscription.study_level.specification}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Groupe</div>
+                            <div class="detail-value">${inscription.group ? inscription.group.id : 'Non assigné'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Année scolaire</div>
+                            <div class="detail-value">${inscription.school_year_id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total des frais</div>
+                            <div class="detail-value total-amount">${new Intl.NumberFormat('fr-FR').format(inscription.total_tuitions)} FCFA</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="fee-amount mb-3">${new Intl.NumberFormat('fr-FR').format(fee.amount)} FCFA</div>
-                <button class="btn btn-pay w-100" onclick="initiatePayment(${inscriptionId}, ${fee.tuition_id}, ${fee.amount}, '${fee.motif}')">
-                    <i class="fas fa-credit-card me-1"></i>Payer
-                </button>
             </div>
         `;
     });
@@ -242,72 +276,122 @@ function displayFees(inscriptionId, fees) {
     container.innerHTML = html;
 }
 
-function initiatePayment(inscriptionId, tuitionId, amount, motif) {
-    // Afficher les détails du paiement dans la modal
-    document.getElementById('payment-details').innerHTML = `
-        <div class="mb-3">
-            <strong>Frais à payer:</strong> ${motif}
-        </div>
-        <div class="mb-3">
-            <strong>Montant:</strong> <span class="text-success fs-5">${new Intl.NumberFormat('fr-FR').format(amount)} FCFA</span>
-        </div>
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>
-            Vous allez être redirigé vers la plateforme de paiement sécurisée KKiaPay.
-        </div>
-    `;
-
-    // Stocker les données de paiement
-    window.currentPayment = {
-        inscriptionId: inscriptionId,
-        tuitionId: tuitionId,
-        amount: amount,
-        motif: motif
-    };
-
-    // Afficher la modal
-    new bootstrap.Modal(document.getElementById('paymentModal')).show();
-}
-
-document.getElementById('confirm-payment').addEventListener('click', async function() {
-    if (!window.currentPayment) return;
-
-    const button = this;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Traitement...';
-    button.disabled = true;
-
+async function openPaymentModal(inscriptionId) {
     try {
-        const response = await fetch('/parent/payments/initiate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                inscription_id: window.currentPayment.inscriptionId,
-                tuition_id: window.currentPayment.tuitionId,
-                amount: window.currentPayment.amount
-            })
-        });
+        // Afficher le modal avec un spinner
+        document.getElementById('payment-content').innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement des informations de paiement...</span>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        modal.show();
 
+        // Charger les détails de paiement
+        const response = await fetch(`/parent/payments/details/${inscriptionId}`);
         const data = await response.json();
 
         if (data.success) {
-            // Rediriger vers KKiaPay (à implémenter)
-            alert('Redirection vers KKiaPay...');
-            // window.location.href = data.payment_url;
+            displayPaymentDetails(data);
         } else {
-            alert('Erreur: ' + data.message);
+            document.getElementById('payment-content').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${data.message || 'Erreur lors du chargement des détails de paiement'}
+                </div>
+            `;
         }
     } catch (error) {
         console.error('Erreur:', error);
-        alert('Erreur lors de l\'initiation du paiement');
-    } finally {
-        button.innerHTML = originalText;
-        button.disabled = false;
-        bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+        document.getElementById('payment-content').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Erreur lors du chargement des informations de paiement
+            </div>
+        `;
+    }
+}
+
+function displayPaymentDetails(data) {
+    const { inscription, current_session, tuitions, total_paid, session_total } = data;
+    
+    let html = `
+        <div class="payment-summary">
+            <h6><strong>Élève:</strong> ${inscription.student.firstname} ${inscription.student.lastname}</h6>
+            <p><strong>Niveau:</strong> ${inscription.study_level.specification} | <strong>Année:</strong> ${inscription.school_year_id}</p>
+            <p><strong>Montant déjà payé:</strong> <span class="text-success">${new Intl.NumberFormat('fr-FR').format(total_paid)} FCFA</span></p>
+        </div>
+
+        <div class="session-header">
+            Session actuelle: ${current_session.denomination}
+            <small class="float-end">Total session: ${new Intl.NumberFormat('fr-FR').format(session_total)} FCFA</small>
+        </div>
+
+        <div class="tuitions-list">
+    `;
+
+    if (tuitions.length > 0) {
+        tuitions.forEach(tuition => {
+            html += `
+                <div class="tuition-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${tuition.motif}</strong>
+                            <br>
+                            <small class="text-muted">${tuition.type}</small>
+                        </div>
+                        <div class="tuition-amount">
+                            ${new Intl.NumberFormat('fr-FR').format(tuition.amount)} FCFA
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+            </div>
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Vous devez payer l'intégralité des frais de cette session avant de pouvoir passer à la suivante.
+            </div>
+        `;
+
+        // Stocker les données pour le paiement
+        window.currentPaymentData = {
+            inscriptionId: inscription.id,
+            sessionId: current_session.id,
+            tuitions: tuitions,
+            totalAmount: session_total - total_paid
+        };
+
+        document.getElementById('proceed-payment').style.display = 'inline-block';
+    } else {
+        html += `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Tous les frais de cette session ont été payés. Vous pouvez passer à la session suivante.
+            </div>
+        </div>`;
+        
+        document.getElementById('proceed-payment').style.display = 'none';
+    }
+
+    document.getElementById('payment-content').innerHTML = html;
+}
+
+document.getElementById('proceed-payment').addEventListener('click', function() {
+    if (window.currentPaymentData) {
+        initiateKKiaPayPayment(window.currentPaymentData);
     }
 });
+
+function initiateKKiaPayPayment(paymentData) {
+    // Cette fonction sera implémentée lors de l'intégration KKiaPay
+    alert(`Redirection vers KKiaPay pour le paiement de ${new Intl.NumberFormat('fr-FR').format(paymentData.totalAmount)} FCFA`);
+    console.log('Données de paiement:', paymentData);
+}
 </script>
 @endsection

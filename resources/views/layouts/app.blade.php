@@ -491,6 +491,7 @@
                             <div class="collapse-inner rounded">
                                 <ul>
                                     <li><a class="collapse-item {{ request()->is('students') ? 'active' : '' }}" href="{{ route('students.index') }}">Liste des élèves</a></li>
+                                    <li><a class="collapse-item {{ request()->is('students') ? 'active' : '' }}" href="{{ route('students.inscriptions.index') }}">Liste des inscriptions</a></li>
                                     
                                     @if (Auth::check() && in_array(Auth::user()->role_id, ['accountant', "admin"]))
                                         <li><a class="collapse-item {{ request()->is('students/create') ? 'active' : '' }}" href="{{ route('students.create') }}">Ajouter un élève</a></li>

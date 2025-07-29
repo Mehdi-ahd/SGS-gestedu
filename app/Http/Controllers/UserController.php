@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AccountRejected;
+use App\Mail\AccountValidated;
 use App\Models\Permission;
 use App\Models\Supervisor;
 use App\Models\SupervisorDocument;
@@ -265,6 +267,11 @@ class UserController extends Controller
 
         $user->status = 'verifié';
         $user->save();
+
+        // Envoyer un email de validation à l'utilisateur
+        Mail::to($user->email)->send(
+            new AccountValidated($user)
+        );
         return redirect()->route("accountConfirmationIndex");
     }
 
@@ -277,8 +284,14 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $user->status = 'rejeté';
+        $rejectionReason = "Indéfini";
         //$user->rejection_reason = $request->input('reason', 'Documents non conformes');
         $user->save();
+
+        // Envoyer un email de rejet à l'utilisateur
+        Mail::to($user->email)->send(
+            new AccountRejected($user, $rejectionReason)
+        );
         return redirect()->route("accountConfirmationIndex");
     }
 }
