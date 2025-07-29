@@ -120,7 +120,7 @@
             </ul>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{{ url('/teacher/dashboard') }}" class="btn">Accéder à mon espace</a>
+                <a href="{{ url('/teacher') }}" class="btn">Accéder à mon espace</a>
             </div>
 
             <p>Si vous avez des questions concernant cette assignation, n'hésitez pas à contacter l'administration.</p>
