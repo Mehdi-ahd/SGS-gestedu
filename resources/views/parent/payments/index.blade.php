@@ -414,6 +414,8 @@ async function initiateKKiaPayPayment(paymentData) {
 
         const result = await response.json();
 
+        console.log(result);
+
         if (result.success) {
             // Ouvrir le widget KKiaPay
             openKkiapayWidget(result.payment_url);
