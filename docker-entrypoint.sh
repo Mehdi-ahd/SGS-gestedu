@@ -26,6 +26,19 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 php artisan cache:clear
+php artisan config:cache
+
+# Créer la clé si elle n'existe pas
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
+
+php artisan key:generate --force
+
+# Vérifie que les dossiers sont là
+mkdir -p storage/logs storage/framework/{cache/data,sessions,views} bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 # Optimiser pour la production si nécessaire
 if [ "$APP_ENV" = "production" ]; then

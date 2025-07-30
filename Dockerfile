@@ -71,11 +71,5 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-
-RUN php artisan config:clear \
- && php artisan cache:clear \
- && php artisan config:cache
-
-
 # Commande par défaut pour Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
