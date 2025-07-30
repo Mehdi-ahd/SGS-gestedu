@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>École Jean Piaget 2 - Excellence Éducative au Bénin</title>
 
-    <link rel="icon" href="{{ asset('img/gestedu-logo.svg') }}" sizes="any">
+    <link rel="icon" href="{{ asset('img/gestedu-logo.svg') }}" sizes="any" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
