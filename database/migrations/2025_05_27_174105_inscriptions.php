@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("student_id")->constrained("students");
             $table->string("group_id", 5);
-            $table->foreignId("study_level_id")->constrained("study_level");
+            $table->foreignId("study_level_id")->constrained("study_levels");
             $table->string("school_year_id",10);
             $table->enum("status", [
                 "en attente",
