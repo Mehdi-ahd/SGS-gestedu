@@ -1,4 +1,3 @@
-
 FROM php:8.2.18-fpm
 
 # Installer les dépendances système
@@ -72,14 +71,10 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-FROM php:8.2-apache
-
 
 RUN php artisan config:clear \
  && php artisan cache:clear \
  && php artisan config:cache
-
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
 
 
 # Commande par défaut pour Laravel
