@@ -10,7 +10,7 @@
     <title>@yield('title') | GestEdu - Espace Professeur</title>
 
     <!-- Favicons -->
-    <link rel="icon" href="{{ asset('img/gestedu-logo.svg') }}" sizes="any">
+    <link rel="icon" href="{{ asset('img/gestedu-logo.svg') }}" sizes="any" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
