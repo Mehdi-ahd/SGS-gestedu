@@ -97,12 +97,19 @@ class KKiaPayService
      */
     public function generatePaymentUrl($amount, $reason, $callback = null, $data = [])
     {
+        if (!$this->publicKey) {
+            throw new \Exception('Clé publique KKiaPay manquante');
+        }
+
         $params = [
             'amount' => $amount,
             'reason' => $reason,
-            'key' => $this->publicKey,
-            'callback' => $callback
+            'key' => $this->publicKey
         ];
+
+        if ($callback) {
+            $params['callback'] = $callback;
+        }
 
         if (!empty($data)) {
             $params['data'] = json_encode($data);
@@ -112,7 +119,15 @@ class KKiaPayService
             ? 'https://widget-sandbox.kkiapay.me' 
             : 'https://widget.kkiapay.me';
 
-        return $basePaymentUrl . '?' . http_build_query($params);
+        $url = $basePaymentUrl . '?' . http_build_query($params);
+        
+        Log::info('KKiaPay URL generated', [
+            'url' => $url,
+            'sandbox' => config('kkiapay.sandbox'),
+            'amount' => $amount
+        ]);
+
+        return $url;
     }
 
     /**

@@ -178,13 +178,26 @@ class ParentPaymentController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Accès non autorisé'
+                ], 403);
+            }
+
+            // Vérifier que les variables KKiaPay sont configurées
+            if (!config('kkiapay.public_key') || !config('kkiapay.private_key')) {
+                Log::error('KKiaPay configuration missing', [
+                    'public_key' => config('kkiapay.public_key') ? 'configured' : 'missing',
+                    'private_key' => config('kkiapay.private_key') ? 'configured' : 'missing'
                 ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Configuration de paiement manquante'
+                ], 500);
             }
 
             // Utiliser le service KKiaPay
             $kkiaPayService = new \App\Services\KKiaPayService();
             
-            $reason = "Frais scolaires - {$inscription->student->getFullName()} - {$inscription->study_level->specification} - {$session->name}";
+            $reason = "Frais scolaires - {$inscription->student->firstname} {$inscription->student->lastname} - {$inscription->study_level->specification} - {$session->name}";
             
             $webhookData = [
                 'inscription_id' => $inscription->id,
@@ -202,17 +215,35 @@ class ParentPaymentController extends Controller
                 $webhookData
             );
 
+            Log::info('Payment URL generated', [
+                'inscription_id' => $inscription->id,
+                'amount' => $request->amount,
+                'payment_url' => $paymentUrl
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Redirection vers KKiaPay...',
                 'payment_url' => $paymentUrl
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'initiation du paiement : ' . $e->getMessage()
+                'message' => 'Données invalides',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Payment initiation error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
             ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'initiation du paiement'
+            ], 500);
         }
     }
 
@@ -243,9 +274,8 @@ class ParentPaymentController extends Controller
                 $existingBill = Bill::where('transaction_id', $transactionId)->first();
                 
                 if (!$existingBill) {
-                    $data = json_decode($transactionData['data'], true);
-
                     $user = User::find(Auth::user()->id);
+                    $data = json_decode($transactionData['data'], true);
                     
                     $bill = Bill::create([
                         'inscription_id' => $data['inscription_id'],
