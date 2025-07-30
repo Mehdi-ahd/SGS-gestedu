@@ -3,6 +3,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,6 +15,24 @@ return new class extends Migration
             $table->string('name', 20);
             $table->timestamps();
         });
+
+        DB::table('study_categories')->insert([
+            [
+                "name" => "Maternelle",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name" => "Primaire",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name" => "Secondaire",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+        ]);
     }
 
     public function down()
