@@ -28,7 +28,7 @@ return new class extends Migration
                 "updated_at" => now()
             ],
             [
-                "name" => "Secondaire",
+                "name" => "College",
                 "created_at" => now(),
                 "updated_at" => now()
             ],

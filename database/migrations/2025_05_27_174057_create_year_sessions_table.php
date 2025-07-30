@@ -3,6 +3,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,6 +15,24 @@ return new class extends Migration
             $table->string('denomination', 20);
             $table->timestamps();
         });
+
+        DB::table('year_sessions')->insert([
+            [
+                "id" => "1er trimestre",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "id" => "2ème trimestre",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "id" => "3ème trimestre",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+        ]);
     }
 
     public function down()
