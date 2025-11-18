@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('user_documents', function (Blueprint $table) {
             $table->id();
             $table->enum('document_type', [
-                "Carte d\'Identitification Personnel",
-                "Carte d\'Identité Nationale",
+                "Carte dIdentitification Personnel",
+                "Carte dIdentité Nationale",
                 "Passeport",
                 'CIP', 
                 'Acte de naissance'
