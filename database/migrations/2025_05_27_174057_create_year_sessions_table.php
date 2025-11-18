@@ -18,17 +18,17 @@ return new class extends Migration
 
         DB::table('year_sessions')->insert([
             [
-                "id" => "1er trimestre",
+                "denomination" => "1er trimestre",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "id" => "2ème trimestre",
+                "denomination" => "2ème trimestre",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "id" => "3ème trimestre",
+                "denomination" => "3ème trimestre",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
